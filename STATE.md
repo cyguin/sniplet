@@ -2,7 +2,40 @@
 
 ## Current Slice
 
-**Slice 5 — DX Polish** (`feature/slice-5-dx`) — complete
+**Deployment Fixes** — Vercel deployment troubleshooting
+
+## Deployment Fixes (post-slice session)
+
+**Root cause**: `better-sqlite3` is a native C++ module that cannot compile on Vercel's serverless Node 24 environment (requires GCC with C++20 support). Fixed by switching example app to `postgres` adapter (pure JS, no native compilation).
+
+**All 11 deployment issues resolved:**
+
+1. `file:../..` in example app's package.json → Fixed by npm workspaces + `"*"` workspace dep
+2. tsconfig.json path aliases overriding npm resolution → Removed aliases
+3. `package-lock.json` pinning `file:../..` → Deleted lockfile
+4. `better-sqlite3` native compilation failure → Moved to `optionalDependencies`; switched example to `postgres`
+5. `ECONNREFUSED` during `next build` → `PostgresAdapter` migration now lazy (called on first operation, not constructor)
+6. `throw new Error()` at module load time in route file → Replaced with null-check that returns 500
+7. Missing try/catch in handler → Added try/catch wrapper, `await` on handler returns
+8. Duplicate API routes (`api/snips/route.ts` and `api/snips/[...sniplet]/route.ts`) → Deleted zero-segment route
+9. Root Directory not set on Vercel → Joe set Root Directory to `examples/nextjs-app`
+10. `dist/` not in git → Workspace approach eliminates need for `npm publish` cycle
+11. `dist/` not built before `next build` on Vercel → Added `prebuild` script + `prepare`/`postinstall` lifecycle hooks
+
+**Workspace setup**: Root `package.json` has `workspaces: ["examples/nextjs-app"]` and `private: true`. Example app uses `@cyguin/sniplet: "*"` which resolves to workspace root. Root has `"files": ["dist"]` for npm publish, `prepare: "npx tsup"` for local builds, and `"prebuild": "npx tsup"` in example app for Vercel builds.
+
+**npm workspaces resolution**: `@cyguin/sniplet` resolves to `dist/index.js` in workspace root. Verified: `require.resolve('@cyguin/sniplet')` → `/Users/joepro/cyguin/17/dist/index.js`
+
+**Files changed for deployment**:
+```
+examples/nextjs-app/app/api/snips/[...sniplet]/route.ts  — null-check guard, no throw
+examples/nextjs-app/app/api/snips/route.ts              — DELETED (redundant)
+examples/nextjs-app/package.json                         — @cyguin/sniplet: "*", prebuild script
+examples/nextjs-app/vercel.json                         — DELETED
+examples/nextjs-app/package-lock.json                   — DELETED
+package.json                                            — workspaces, private, prepare script, optionalDependencies
+.gitignore                                             — NEW (node_modules/, dist/, etc.)
+```
 
 ## Slice 5 — Bugs Fixed (post-DX session)
 
@@ -125,7 +158,9 @@ src/adapters/postgres.ts — @example on constructor
 
 ## Next
 
-All slices complete. Ready for Joe to merge Slice 5 and publish.
+Waiting on Vercel redeploy to verify the workspace approach works. Then smoke-test the deployment.
+
+To deploy: Joe triggers a Vercel redeploy (or push triggers it automatically).
 
 ## Open Questions
 
