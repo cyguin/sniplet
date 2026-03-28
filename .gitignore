@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.turbo/
+.next/
+out/
+*.local
+.env
+.env.*
+!.env.example
+examples/nextjs-app/data/*.db
+examples/nextjs-app/data/*.db-shm
+examples/nextjs-app/data/*.db-wal
+*.tgz
+cyguin-sniplet-*.tgz
+.vercel
