@@ -2,57 +2,38 @@
 
 ## Current Slice
 
-**Deployment Fixes** — Vercel deployment troubleshooting
+**Deployment — LIVE** — `sniplet-7ojdaegxo-joepros-projects.vercel.app` ✅
 
-## Deployment Fixes (post-slice session)
+## Deployment Fixes (ongoing)
 
-**Root cause**: `better-sqlite3` is a native C++ module that cannot compile on Vercel's serverless Node 24 environment (requires GCC with C++20 support). Fixed by switching example app to `postgres` adapter (pure JS, no native compilation).
+**Root cause**: `better-sqlite3` is a native C++ module that cannot compile on Vercel's serverless Node 24 environment. Fixed by switching example app to `postgres` adapter (pure JS, no native compilation).
 
-**All 11 deployment issues resolved:**
+**All 12 deployment issues resolved (this session):**
 
-1. `file:../..` in example app's package.json → Fixed by npm workspaces + `"*"` workspace dep
+1. `file:../..` in example app's package.json → npm workspaces + `"*"` workspace dep
 2. tsconfig.json path aliases overriding npm resolution → Removed aliases
 3. `package-lock.json` pinning `file:../..` → Deleted lockfile
-4. `better-sqlite3` native compilation failure → Moved to `optionalDependencies`; switched example to `postgres`
-5. `ECONNREFUSED` during `next build` → `PostgresAdapter` migration now lazy (called on first operation, not constructor)
-6. `throw new Error()` at module load time in route file → Replaced with null-check that returns 500
-7. Missing try/catch in handler → Added try/catch wrapper, `await` on handler returns
-8. Duplicate API routes (`api/snips/route.ts` and `api/snips/[...sniplet]/route.ts`) → Deleted zero-segment route
-9. Root Directory not set on Vercel → Joe set Root Directory to `examples/nextjs-app`
-10. `dist/` not in git → Workspace approach eliminates need for `npm publish` cycle
-11. `dist/` not built before `next build` on Vercel → Added `prebuild` script + `prepare`/`postinstall` lifecycle hooks
+4. `better-sqlite3` native compilation failure → `optionalDependencies`; example uses `postgres`
+5. `ECONNREFUSED` during `next build` → `PostgresAdapter` migration lazy
+6. `throw new Error()` at module load time → Null-check returning 500
+7. Missing try/catch in handler → Added wrapper, `await` on returns
+8. Root Directory not set on Vercel → Joe set Root Directory to `examples/nextjs-app`
+9. `dist/` not built before `next build` on Vercel → `prebuild` script + lifecycle hooks
+10. `next build` not running on Vercel (stale `.next/` served) → Force-push commits + `BUILDING` state wait
+11. **`POST /api/snips` returning 404** → Added `app/api/snips/route.ts` alongside `[...sniplet]/route.ts`
+12. Vercel CLI token invalid → Use Vercel API directly for deployments
 
-**Workspace setup**: Root `package.json` has `workspaces: ["examples/nextjs-app"]` and `private: true`. Example app uses `@cyguin/sniplet: "*"` which resolves to workspace root. Root has `"files": ["dist"]` for npm publish, `prepare: "npx tsup"` for local builds, and `"prebuild": "npx tsup"` in example app for Vercel builds.
+**Root cause of 404 on POST**: Next.js App Router production mode does not route `POST /api/snips` (zero URL segments after `/api/snips`) to `[...sniplet]`. The catch-all requires at least one matchable segment. Fixed by having both `app/api/snips/route.ts` (handles root `/api/snips`) and `app/api/snips/[...sniplet]/route.ts` (handles `/api/snips/:id`).
 
-**npm workspaces resolution**: `@cyguin/sniplet` resolves to `dist/index.js` in workspace root. Verified: `require.resolve('@cyguin/sniplet')` → `/Users/joepro/cyguin/17/dist/index.js`
+**Smoke test results** (2026-03-28):
+- `POST /api/snips` → 201 ✅
+- `GET /api/snips/:id` → 200 ✅
+- `DELETE /api/snips/:id` → 204 ✅
+- GET after delete → 404 ✅
 
-**Files changed for deployment**:
-```
-examples/nextjs-app/app/api/snips/[...sniplet]/route.ts  — null-check guard, no throw
-examples/nextjs-app/app/api/snips/route.ts              — DELETED (redundant)
-examples/nextjs-app/package.json                         — @cyguin/sniplet: "*", prebuild script
-examples/nextjs-app/vercel.json                         — DELETED
-examples/nextjs-app/package-lock.json                   — DELETED
-package.json                                            — workspaces, private, prepare script, optionalDependencies
-.gitignore                                             — NEW (node_modules/, dist/, etc.)
-```
+**Workspace setup**: Root `package.json` has `workspaces: ["examples/nextjs-app"]` and `private: true`. Example app uses `@cyguin/sniplet: "*"` which resolves to workspace root.
 
-## Slice 5 — Bugs Fixed (post-DX session)
-
-**Critical: Zero-segment route bug**
-Next.js App Router does not route `GET/POST /api/snips` (zero segments) to `[...sniplet]`. Fixed by adding `app/api/snips/route.ts` co-located with `app/api/snips/[...sniplet]/route.ts`. Both export the same handler and work together.
-
-**CLI fixes**
-- Now generates both `app/api/snips/route.ts` and `app/api/snips/[...sniplet]/route.ts`
-- Fixed `SNIPLET_DB_PATH` default to `./data/sniplet.db`
-- Fixed React 19 `use(params)` pattern → Next.js 14-compatible `params` props in `SNIP_PAGE` template
-- Removed `.js` from local imports in `src/next/types.ts`
-
-**Example app fixes**
-- Added `"type": "module"` to package.json (fixes Node.js ESM warning)
-- Removed debug `app/api/test/route.ts`
-
-**Smoke QA results**: 3 routes tested (all PASS), burn-on-read verified (first=200, second=410), form submission works, navigation to `/snips/[id]` works.
+**Vercel project**: `joepros-projects/sniplet`, Root Directory: `examples/nextjs-app`
 
 ## Completed
 
@@ -87,7 +68,7 @@ Next.js App Router does not route `GET/POST /api/snips` (zero segments) to `[...
 ### Slice 4 — CLI Scaffolder ✅
 - `npx @cyguin/sniplet init` scaffolding command
 - Detects Next.js App Router project, installs dependency
-- Writes `app/api/snips/[...sniplet]/route.ts` with SQLiteAdapter
+- Writes `app/api/snips/route.ts` (root POST handler) and `app/api/snips/[...sniplet]/route.ts` (GET/DELETE)
 - Writes `app/snips/page.tsx` and `app/snips/[id]/page.tsx`
 - Prints `.env` snippet and next steps
 - Exits cleanly if files already exist (no overwrite)
@@ -158,9 +139,9 @@ src/adapters/postgres.ts — @example on constructor
 
 ## Next
 
-Waiting on Vercel redeploy to verify the workspace approach works. Then smoke-test the deployment.
+Deployment is live. Snip creation, retrieval, and deletion all working on Vercel.
 
-To deploy: Joe triggers a Vercel redeploy (or push triggers it automatically).
+Remaining: verify the UI pages (`/snips` and `/snips/:id`) render correctly in production.
 
 ## Open Questions
 
