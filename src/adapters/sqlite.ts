@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3'
 import { nanoid } from 'nanoid'
-import type { SnipletAdapter, Snip, CreateSnipInput } from '../core/types.js'
-import { SnipNotFoundError, SnipAlreadyBurnedError, SnipExpiredError } from '../core/errors.js'
+import type { SnipletAdapter, Snip, CreateSnipInput } from '../core/types'
+import { SnipNotFoundError, SnipAlreadyBurnedError, SnipExpiredError } from '../core/errors'
 
 interface DbRow {
   id: string

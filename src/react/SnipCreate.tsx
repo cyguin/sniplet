@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type FormEvent, type ChangeEvent } from 'react'
-import type { ExpiryOption } from '../next/types.js'
+import type { ExpiryOption } from '../next/types'
 
 /**
  * Props for the SnipCreate component.

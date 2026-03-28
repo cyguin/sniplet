@@ -1,4 +1,4 @@
-import type { SnipletAdapter } from '../core/types.js'
+import type { SnipletAdapter } from '../core/types'
 
 /** Supported expiry durations for snips. */
 export type ExpiryOption = '1h' | '24h' | '7d' | 'never'

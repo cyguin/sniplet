@@ -58,10 +58,10 @@ function ensureDir(filePath: string): void {
   mkdirSync(dirname(filePath), { recursive: true })
 }
 
-const ROUTE_FILE = `import { createSnipletHandler } from '@cyguin/sniplet/next'
+const ROUTE_SHARED = `import { createSnipletHandler } from '@cyguin/sniplet/next'
 import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
 
-const adapter = new SQLiteAdapter()
+const adapter = new SQLiteAdapter(process.env.SNIPLET_DB_PATH ?? './data/sniplet.db')
 const handler = createSnipletHandler({ adapter })
 
 export { handler as GET, handler as POST, handler as DELETE }
@@ -94,13 +94,11 @@ export default function SnipsPage() {
 const SNIP_PAGE = `'use client'
 
 import { SnipView } from '@cyguin/sniplet/react'
-import { use } from 'react'
 
-export default function SnipPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function SnipPage({ params }: { params: { id: string } }) {
   return (
     <main style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <SnipView id={id} variant="tailwind" />
+      <SnipView id={params.id} variant="tailwind" />
     </main>
   )
 }
@@ -108,7 +106,7 @@ export default function SnipPage({ params }: { params: Promise<{ id: string }> }
 
 const ENV_SNIPPET = `# Environment variables for @cyguin/sniplet
 # Required for SQLite adapter — path to your SQLite database file
-SNIPLET_DB_PATH=./data/snippets.db
+SNIPLET_DB_PATH=./data/sniplet.db
 `
 
 const NEXT_STEPS = `
@@ -177,7 +175,8 @@ function runInit(args: CliArgs): void {
   const snipDir = join(absTarget, 'app/snips/[id]')
 
   let filesWritten = 0
-  if (writeFile(join(apiDir, 'route.ts'), ROUTE_FILE, force)) filesWritten++
+  if (writeFile(join(apiDir, 'route.ts'), ROUTE_SHARED, force)) filesWritten++
+  if (writeFile(join(absTarget, 'app/api/snips/route.ts'), ROUTE_SHARED, force)) filesWritten++
   if (writeFile(join(snipsDir, 'page.tsx'), SNIPS_PAGE, force)) filesWritten++
   if (writeFile(join(snipDir, 'page.tsx'), SNIP_PAGE, force)) filesWritten++
 

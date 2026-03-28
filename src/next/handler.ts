@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server.js'
-import type { SnipletAdapter, Snip } from '../core/types.js'
+import type { SnipletAdapter, Snip } from '../core/types'
 import {
   SnipNotFoundError,
   SnipAlreadyBurnedError,
   SnipExpiredError,
-} from '../core/errors.js'
-import type { SnipletConfig, ExpiryOption } from './types.js'
-import { checkRateLimit } from './middleware.js'
+} from '../core/errors'
+import type { SnipletConfig, ExpiryOption } from './types'
+import { checkRateLimit } from './middleware'
 
 const DEFAULT_MAX_LENGTH = 100_000
 const DEFAULT_EXPIRY: ExpiryOption = '7d'

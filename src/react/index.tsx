@@ -8,5 +8,5 @@
  *
  * @module
  */
-export { SnipCreate } from './SnipCreate.js'
-export { SnipView } from './SnipView.js'
+export { SnipCreate } from './SnipCreate'
+export { SnipView } from './SnipView'
