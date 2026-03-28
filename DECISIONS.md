@@ -1,5 +1,27 @@
 # DECISIONS.md — @cyguin/sniplet
 
+## Slice 2 Decisions
+
+### DELETE returns 404 via pre-check workaround
+
+**Decision:** The handler's `handleDelete()` calls `adapter.get(id)` before `adapter.delete(id)` to detect non-existent snips and return 404.
+
+**Alternatives considered:**
+1. Rely on `adapter.delete()` throwing on non-existent snips — it doesn't, it silently succeeds
+2. Add a `snipExists(id)` method to the adapter interface — would require adapter changes and Slice 1 scope
+
+**Rationale:** The adapter silently succeeds on delete of non-existent snips. The spec requires 404 for DELETE on unknown snip. The most minimal fix is a pre-check in the handler layer. This doesn't affect the adapter interface and keeps the change localized.
+
+---
+
+### Rate limiter fails open on unknown IP
+
+**Decision:** When client IP cannot be determined from headers (`x-forwarded-for`, `x-real-ip`), the rate limiter returns `'allowed'` rather than blocking.
+
+**Rationale:** Prevents lockout in environments where IP headers are not available (e.g., localhost, certain proxies). The security trade-off is acceptable in v1 since rate limiting is a DOS protection mechanism, not an auth boundary.
+
+---
+
 ## Slice 1 Decisions
 
 ### `get()` return type: `Promise<Snip>` throws on not-found
