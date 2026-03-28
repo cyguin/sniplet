@@ -12,5 +12,5 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', 'next', 'better-sqlite3', 'postgres'],
+  external: ['react', 'react-dom', 'next', 'better-sqlite3', 'postgres', 'shiki'],
 })
