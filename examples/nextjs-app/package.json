@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "postinstall": "tsup",
-    "prebuild": "tsup",
+    "postinstall": "sh -c 'cd ../.. && tsup'",
+    "prebuild": "sh -c 'cd ../.. && tsup'",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
