@@ -22,9 +22,7 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-    "prepare": "npx tsup"
-  },
+
   "peerDependencies": {
     "next": ">=14",
     "react": ">=18",
