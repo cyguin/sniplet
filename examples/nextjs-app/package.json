@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "postinstall": "npx tsup",
-    "prebuild": "npx tsup",
+    "postinstall": "tsup",
+    "prebuild": "tsup",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
