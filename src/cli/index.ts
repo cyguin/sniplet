@@ -176,7 +176,6 @@ function runInit(args: CliArgs): void {
 
   let filesWritten = 0
   if (writeFile(join(apiDir, 'route.ts'), ROUTE_SHARED, force)) filesWritten++
-  if (writeFile(join(absTarget, 'app/api/snips/route.ts'), ROUTE_SHARED, force)) filesWritten++
   if (writeFile(join(snipsDir, 'page.tsx'), SNIPS_PAGE, force)) filesWritten++
   if (writeFile(join(snipDir, 'page.tsx'), SNIP_PAGE, force)) filesWritten++
 
