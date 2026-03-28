@@ -2,15 +2,15 @@
 
 ## Slice 1 Decisions
 
-### `get()` return type vs. throw convention
+### `get()` return type: `Promise<Snip>` throws on not-found
 
-**Decision:** `SnipletAdapter.get()` throws `SnipNotFoundError` when a snip is not found, despite the interface declaring `Promise<Snip | null>`.
+**Decision:** `SnipletAdapter.get()` has return type `Promise<Snip>` (no `| null`) and throws `SnipNotFoundError` when a snip is not found.
 
 **Alternatives considered:**
-1. Return `null` for not-found (matches interface signature literally) — but TRUTH-6 and AGENTS.md require throwing `SnipNotFoundError`
-2. Change the interface to `Promise<Snip>` — would deviate from the exact type specified in AGENTS.md
+1. Return `null` for not-found — null returns are ambiguous in a typed error system and inconsistent with the throw convention
+2. Keep `| null` in interface with covariant workaround — leaves an incorrect signal in the public API
 
-**Rationale:** The AGENTS.md error convention ("All functions in src/core/ and src/adapters/ THROW typed errors on failure") takes precedence over the literal interface return type. TypeScript's covariant return types allow `Promise<Snip>` to satisfy `Promise<Snip | null>` without casting.
+**Rationale:** Joe confirmed the `| null` was a spec mistake. The throw convention is correct — null returns are ambiguous when all other error cases throw typed errors. Interface updated to match implementation.
 
 ---
 

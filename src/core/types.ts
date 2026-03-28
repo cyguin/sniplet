@@ -17,7 +17,7 @@ export interface CreateSnipInput {
 
 export interface SnipletAdapter {
   create(input: CreateSnipInput): Promise<Snip>
-  get(id: string): Promise<Snip | null>
+  get(id: string): Promise<Snip>
   delete(id: string): Promise<void>
   sweep(): Promise<number>
 }
