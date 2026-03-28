@@ -25,6 +25,10 @@ function rowToSnip(row: DbSnip): Snip {
   }
 }
 
+/**
+ * Postgres adapter using porsager/postgres. Atomic burn-on-read via
+ * UPDATE ... RETURNING. Idempotent migration runs on first use.
+ */
 export class PostgresAdapter implements SnipletAdapter {
   private sql: ReturnType<typeof postgres>
 

@@ -2,47 +2,37 @@
 
 ## Current Slice
 
-**Slice 1 — Core Domain** (`feature/slice-1-core`)
+**Slice 2 — Next.js Route Handler** (`feature/slice-2-next-handler`)
 
 ## Completed
 
-- `SnipletAdapter` interface exported from `src/core/types.ts`
-- `Snip` and `CreateSnipInput` types exported from `src/core/types.ts`
-- `SnipletError`, `SnipNotFoundError`, `SnipAlreadyBurnedError`, `SnipExpiredError` exported from `src/core/errors.ts`
-- `SQLiteAdapter` fully implements `SnipletAdapter` with atomic burn-on-read
-- `PostgresAdapter` fully implements `SnipletAdapter` with atomic burn-on-read
-- Both adapters run idempotent migration on first use (CREATE TABLE IF NOT EXISTS)
-- `sweep()` deletes expired snips and returns count on both adapters
-- 15 vitest tests pass for SQLite adapter covering all TRUTH-6 cases
-- Postgres tests skip gracefully when Docker is unavailable
-- Zero TypeScript errors (`npx tsc --noEmit`)
+- `createSnipletHandler()` exported from `src/next/index.ts`
+- Handles GET (view), POST (create), DELETE (delete) via catch-all route
+- Error classes map correctly to HTTP status codes
+- In-memory rate limiting middleware with IP-based keying
+- `SnipletOptions` and `SnipletConfig` types exported
+- All 17 vitest integration tests pass
+- 32 vitest tests pass total (15 SQLite + 17 Next handler, 15 Postgres skipped)
+- Zero TypeScript errors
 
 ## Files Changed
 
 ```
-src/core/types.ts        — Snip, CreateSnipInput, SnipletAdapter interface
-src/core/errors.ts       — SnipletError subclasses
-src/core/adapter.ts      — re-exports SnipletAdapter
-src/core/index.ts        — barrel export
-src/index.ts             — package barrel export
-src/adapters/sqlite.ts   — SQLiteAdapter implementation
-src/adapters/postgres.ts — PostgresAdapter implementation
-tests/sqlite.test.ts     — 15 tests for SQLiteAdapter
-tests/postgres.test.ts   — 15 tests for PostgresAdapter (skips without Docker)
-vitest.config.ts         — vitest configuration
-tsconfig.json            — TypeScript configuration
-tsup.config.ts           — tsup build configuration
-package.json             — deps + package metadata
+src/next/types.ts       — SnipletConfig, SnipletOptions, ExpiryOption types
+src/next/middleware.ts  — in-memory rate limiter with IP keying
+src/next/handler.ts     — createSnipletHandler, route dispatch, error mapping
+src/next/index.ts       — barrel export
+tests/next.test.ts      — 17 integration tests covering all TRUTH cases
+package.json            — added next@14 as devDependency for test runtime
 ```
 
 ## Next
 
-- **Slice 2** (`feature/slice-2-next-handler`): `src/next/` — createSnipletHandler(), rate limiting, HTTP status mapping
+- **Slice 3** (`feature/slice-3-react`): `src/react/` — `<SnipCreate>` and `<SnipView>` components
 
 ## Open Questions
 
-- Postgres tests require Docker. CI environment needs Docker available to run full test suite.
-- The `SnipletAdapter.get()` interface declares `Promise<Snip | null>` but implementation throws `SnipNotFoundError` per AGENTS.md throw-on-error convention. TypeScript allows covariant return types so this is fine in practice.
+- The SQLiteAdapter `delete()` method is silent on non-existent snips (no throw). Handler works around this by pre-checking existence with `get()` before delete. Consider whether to add a `deleteExists()` method to the adapter interface in a future slice.
 
 ## Deferred
 

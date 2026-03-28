@@ -1,3 +1,7 @@
+/**
+ * A stored snippet.
+ * @see https://sniplet.cyguin.com/docs
+ */
 export interface Snip {
   id: string
   content: string
@@ -8,6 +12,9 @@ export interface Snip {
   createdAt: Date
 }
 
+/**
+ * Input for creating a new snip.
+ */
 export interface CreateSnipInput {
   content: string
   language?: string
@@ -15,6 +22,10 @@ export interface CreateSnipInput {
   burnOnRead?: boolean
 }
 
+/**
+ * Storage adapter for snips. Implement this to add support for a new database.
+ * @see SQLiteAdapter for an example implementation.
+ */
 export interface SnipletAdapter {
   create(input: CreateSnipInput): Promise<Snip>
   get(id: string): Promise<Snip>
