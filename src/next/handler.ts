@@ -64,7 +64,7 @@ export function createSnipletHandler(config: SnipletConfig) {
       const segments = context.params?.sniplet ?? []
       const method = request.method
 
-      if (method === 'POST' && segments.length === 0) {
+      if (method === 'POST' && (segments.length === 0 || segments[0] === '')) {
         if (rateLimit) {
           const result = checkRateLimit(request, rateLimit.window, rateLimit.max)
           if (result === 'rate_limited') {
