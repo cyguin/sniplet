@@ -37,6 +37,7 @@ function rowToSnip(row: DbSnip): Snip {
  */
 export class PostgresAdapter implements SnipletAdapter {
   private sql: ReturnType<typeof postgres>
+  private migrated = false
 
   /**
    * Creates a new PostgresAdapter.
@@ -46,10 +47,11 @@ export class PostgresAdapter implements SnipletAdapter {
    */
   constructor(connectionString: string) {
     this.sql = postgres(connectionString)
-    this.migrate()
   }
 
-  private async migrate(): Promise<void> {
+  private async ensureMigrated(): Promise<void> {
+    if (this.migrated) return
+    this.migrated = true
     await this.sql`
       CREATE TABLE IF NOT EXISTS sniplet_snips (
         id            TEXT PRIMARY KEY,
@@ -69,6 +71,7 @@ export class PostgresAdapter implements SnipletAdapter {
   }
 
   async create(input: CreateSnipInput): Promise<Snip> {
+    await this.ensureMigrated()
     const id = nanoid(12)
 
     const [row] = await this.sql<[DbSnip]>`
@@ -87,6 +90,7 @@ export class PostgresAdapter implements SnipletAdapter {
   }
 
   async get(id: string): Promise<Snip> {
+    await this.ensureMigrated()
     const [row] = await this.sql<[DbSnip | undefined]>`
       SELECT * FROM sniplet_snips WHERE id = ${id}
     `
@@ -124,10 +128,12 @@ export class PostgresAdapter implements SnipletAdapter {
   }
 
   async delete(id: string): Promise<void> {
+    await this.ensureMigrated()
     await this.sql`DELETE FROM sniplet_snips WHERE id = ${id}`
   }
 
   async sweep(): Promise<number> {
+    await this.ensureMigrated()
     const result = await this.sql`
       DELETE FROM sniplet_snips
       WHERE expires_at IS NOT NULL AND expires_at < NOW()

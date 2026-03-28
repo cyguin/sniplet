@@ -1,6 +1,6 @@
 {
   "name": "@cyguin/sniplet",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "type": "module",
   "description": "Drop-in snippet sharing for Next.js apps",
   "license": "MIT",
@@ -23,10 +23,12 @@
     "react-dom": ">=18"
   },
   "dependencies": {
-    "better-sqlite3": "^9.6.0",
     "nanoid": "^5.1.7",
     "postgres": "^3.4.8",
     "shiki": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^9.6.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
