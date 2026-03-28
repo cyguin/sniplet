@@ -14,6 +14,16 @@ export interface Snip {
 
 /**
  * Input for creating a new snip.
+ *
+ * @example
+ * ```typescript
+ * await adapter.create({
+ *   content: 'console.log("hello")',
+ *   language: 'typescript',
+ *   burnOnRead: true,
+ *   expiresAt: new Date(Date.now() + 3600_000), // 1 hour
+ * })
+ * ```
  */
 export interface CreateSnipInput {
   content: string
@@ -23,8 +33,16 @@ export interface CreateSnipInput {
 }
 
 /**
- * Storage adapter for snips. Implement this to add support for a new database.
- * @see SQLiteAdapter for an example implementation.
+ * Interface for snip storage backends.
+ *
+ * @example
+ * ```typescript
+ * import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
+ *
+ * const adapter = new SQLiteAdapter('./snips.db')
+ * const snip = await adapter.create({ content: 'hello world' })
+ * const retrieved = await adapter.get(snip.id)
+ * ```
  */
 export interface SnipletAdapter {
   create(input: CreateSnipInput): Promise<Snip>

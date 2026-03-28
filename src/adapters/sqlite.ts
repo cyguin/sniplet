@@ -28,10 +28,22 @@ function rowToSnip(row: DbRow): Snip {
 /**
  * SQLite adapter using better-sqlite3. Thread-safe, WAL mode enabled.
  * Idempotent migration runs on first use.
+ *
+ * @example
+ * ```typescript
+ * import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
+ * const adapter = new SQLiteAdapter('./data/snips.db')
+ * ```
  */
 export class SQLiteAdapter implements SnipletAdapter {
   private db: Database.Database
 
+  /**
+   * Creates a new SQLiteAdapter.
+   *
+   * @param filename - Path to the SQLite database file. Use `:memory:` for an
+   *   in-memory database (useful for tests).
+   */
   constructor(filename: string) {
     this.db = new Database(filename)
     this.db.pragma('journal_mode = WAL')

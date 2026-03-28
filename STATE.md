@@ -2,7 +2,7 @@
 
 ## Current Slice
 
-**Slice 3 — React Components** (`feature/slice-3-react`)
+**Slice 5 — DX Polish** (`feature/slice-5-dx`) — complete
 
 ## Completed
 
@@ -25,7 +25,7 @@
 - 17 vitest integration tests pass (32 total)
 - Zero TypeScript errors
 
-### Slice 3 — React Components (in progress) 🔄
+### Slice 3 — React Components ✅
 - `<SnipCreate>` — textarea, language input, expiry select, burn-on-read checkbox, submit
 - `<SnipView>` — fetches snip, async shiki highlighting, expiry countdown, 404/410 states
 - Both accept `className` prop and forward to root element
@@ -33,6 +33,26 @@
 - No bundled CSS — styles are className-only
 - Client components (`'use client'`)
 - shiki loaded async with plain-text fallback while loading
+
+### Slice 4 — CLI Scaffolder ✅
+- `npx @cyguin/sniplet init` scaffolding command
+- Detects Next.js App Router project, installs dependency
+- Writes `app/api/snips/[...sniplet]/route.ts` with SQLiteAdapter
+- Writes `app/snips/page.tsx` and `app/snips/[id]/page.tsx`
+- Prints `.env` snippet and next steps
+- Exits cleanly if files already exist (no overwrite)
+- Works on macOS and Linux
+
+### Slice 5 — DX Polish ✅
+- README.md with 10 sections in order: Header → What is this? → Quickstart → Manual Setup → Storage Adapters → Configuration → React Components → Exports → Requirements → License
+- Quickstart is CLI-first (3 lines)
+- Manual setup shows Postgres swap as a comment
+- `examples/nextjs-app/` scaffolded with SQLiteAdapter default, PostgresAdapter via env var
+- Example app uses `"@cyguin/sniplet": "file:../.."` for local dev
+- All public exports have JSDoc with `@example` blocks
+- `bin` field added to package.json (`sniplet` command)
+- `cli` entry added to tsup.config.ts
+- 32 vitest tests pass, zero TypeScript errors in root and example app
 
 ## Files Changed
 
@@ -51,7 +71,7 @@ src/next/types.ts       — SnipletConfig, SnipletOptions, ExpiryOption
 src/next/middleware.ts  — in-memory rate limiter
 src/next/handler.ts     — createSnipletHandler, route dispatch, error mapping
 src/next/index.ts       — barrel export
-tests/next.test.ts      — 17 integration tests
+tests/next.test.ts       — 17 integration tests
 package.json            — next@14 as devDependency
 ```
 
@@ -61,13 +81,34 @@ src/react/SnipCreate.tsx — create form component
 src/react/SnipView.tsx   — view/highlight component
 src/react/index.tsx      — barrel export with JSDoc
 package.json             — shiki, @types/react, @types/react-dom
-tsconfig.json            — jsx: react-jsx
-tsup.config.ts           — shiki added to external
+tsconfig.json           — jsx: react-jsx
+tsup.config.ts          — shiki added to external
+```
+
+### Slice 4
+```
+src/cli/index.ts        — CLI scaffolder implementation
+```
+
+### Slice 5
+```
+README.md               — 10-section README, CLI-first quickstart
+examples/nextjs-app/    — full working example app
+package.json            — bin field added
+tsup.config.ts          — cli entry added
+src/core/types.ts       — @example on SnipletAdapter, CreateSnipInput
+src/core/errors.ts      — @example on SnipletError
+src/next/types.ts       — @example on SnipletOptions, SnipletConfig
+src/next/index.ts       — @example on createSnipletHandler
+src/react/SnipCreate.tsx — JSDoc on props and component
+src/react/SnipView.tsx   — JSDoc on props and component; useEffect deps fix
+src/adapters/sqlite.ts  — @example on constructor
+src/adapters/postgres.ts — @example on constructor
 ```
 
 ## Next
 
-- **Slice 3** — run vitest, run build, commit, merge, kick off Slice 4 (CLI scaffolder)
+All slices complete. Ready for Joe to merge Slice 5 and publish.
 
 ## Open Questions
 
@@ -75,4 +116,4 @@ tsup.config.ts           — shiki added to external
 
 ## Deferred
 
-- ESLint / Prettier config — not needed until Slice 5
+- ESLint / Prettier config — not needed until later

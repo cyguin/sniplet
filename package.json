@@ -4,6 +4,9 @@
   "type": "module",
   "description": "Drop-in snippet sharing for Next.js apps",
   "license": "MIT",
+  "bin": {
+    "sniplet": "./dist/cli.js"
+  },
   "exports": {
     ".": "./dist/index.js",
     "./next": "./dist/next/index.js",

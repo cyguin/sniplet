@@ -3,10 +3,17 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react'
 import type { ExpiryOption } from '../next/types.js'
 
-interface SnipCreateProps {
+/**
+ * Props for the SnipCreate component.
+ */
+export interface SnipCreateProps {
+  /** Base URL of the snip API. Defaults to "/api/snips". */
   apiBase?: string
+  /** Called with the created snip ID and full URL after a successful create. */
   onSuccess?: (id: string, url: string) => void
+  /** Additional CSS class names. */
   className?: string
+  /** Visual style variant. "base" is unstyled, "tailwind" applies Tailwind classes. */
   variant?: 'base' | 'tailwind'
 }
 
@@ -17,6 +24,24 @@ const EXPIRY_OPTIONS: { value: ExpiryOption; label: string }[] = [
   { value: 'never', label: 'Never' },
 ]
 
+/**
+ * Form for creating a new snip. Posts to the snip API and calls onSuccess
+ * with the created ID and full URL.
+ *
+ * @example
+ * ```tsx
+ * import { SnipCreate } from '@cyguin/sniplet/react'
+ *
+ * export default function CreatePage() {
+ *   return (
+ *     <SnipCreate
+ *       variant="tailwind"
+ *       onSuccess={(id, url) => window.location.href = `/snips/${id}`}
+ *     />
+ *   )
+ * }
+ * ```
+ */
 export function SnipCreate({
   apiBase = '/api/snips',
   onSuccess,

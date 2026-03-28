@@ -28,10 +28,22 @@ function rowToSnip(row: DbSnip): Snip {
 /**
  * Postgres adapter using porsager/postgres. Atomic burn-on-read via
  * UPDATE ... RETURNING. Idempotent migration runs on first use.
+ *
+ * @example
+ * ```typescript
+ * import { PostgresAdapter } from '@cyguin/sniplet/adapters/postgres'
+ * const adapter = new PostgresAdapter(process.env.DATABASE_URL!)
+ * ```
  */
 export class PostgresAdapter implements SnipletAdapter {
   private sql: ReturnType<typeof postgres>
 
+  /**
+   * Creates a new PostgresAdapter.
+   *
+   * @param connectionString - A standard Postgres connection string, e.g.
+   *   `postgres://user:password@localhost:5432/sniplet`.
+   */
   constructor(connectionString: string) {
     this.sql = postgres(connectionString)
     this.migrate()

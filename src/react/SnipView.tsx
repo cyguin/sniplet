@@ -17,10 +17,17 @@ type SnipViewState =
   | { status: 'success'; snip: SnipData }
   | { status: 'error'; code: 404 | 410 | 500; message: string }
 
-interface SnipViewProps {
+/**
+ * Props for the SnipView component.
+ */
+export interface SnipViewProps {
+  /** The snip ID from the URL. */
   id: string
+  /** Base URL of the snip API. Defaults to "/api/snips". */
   apiBase?: string
+  /** Additional CSS class names. */
   className?: string
+  /** Visual style variant. "base" is unstyled, "tailwind" applies Tailwind classes. */
   variant?: 'base' | 'tailwind'
 }
 
@@ -64,6 +71,18 @@ function computeLabel(expiresAt: string): string {
   return `Expires in ${minutes}m`
 }
 
+/**
+ * Fetches and displays a snip with syntax highlighting and expiry countdown.
+ *
+ * @example
+ * ```tsx
+ * import { SnipView } from '@cyguin/sniplet/react'
+ *
+ * export default function Page({ params }: { params: { id: string } }) {
+ *   return <SnipView id={params.id} variant="tailwind" />
+ * }
+ * ```
+ */
 export function SnipView({ id, apiBase = '/api/snips', className = '', variant = 'base' }: SnipViewProps) {
   const [state, setState] = useState<SnipViewState>({ status: 'loading' })
   const [highlightedHtml, setHighlightedHtml] = useState<string>('')
@@ -98,13 +117,15 @@ export function SnipView({ id, apiBase = '/api/snips', className = '', variant =
 
   useEffect(() => {
     if (state.status !== 'success') return
+    const snipContent = state.snip.content
+    const snipLanguage = state.snip.language
     setHighlighterLoading(true)
     getHighlighter()
       .then(async (highlighter) => {
-        const lang = state.snip.language ?? 'text'
+        const lang = snipLanguage ?? 'text'
         const loadedLangs = highlighter.getLoadedLanguages()
         const finalLang = loadedLangs.includes(lang as Parameters<typeof highlighter.getLoadedLanguages>[number]) ? lang : 'text'
-        const html = highlighter.codeToHtml(state.snip.content, {
+        const html = highlighter.codeToHtml(snipContent, {
           lang: finalLang,
           theme: 'github-light',
         })
@@ -112,11 +133,14 @@ export function SnipView({ id, apiBase = '/api/snips', className = '', variant =
       })
       .catch(() => {
         setHighlightedHtml(
-          `<pre><code>${state.snip.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`,
+          `<pre><code>${snipContent.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`,
         )
       })
       .finally(() => setHighlighterLoading(false))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // snipContent/snipLanguage are captured after the guard so the effect only
+    // re-runs when content changes. ESLint can't trace state.snip through the
+    // guard, so we suppress exhaustive-deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.status === 'success' ? state.snip.content : null])
 
   const baseClasses = 'sniplet-view'

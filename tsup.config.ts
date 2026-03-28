@@ -7,6 +7,7 @@ export default defineConfig({
     'react/index':        'src/react/index.tsx',
     'adapters/sqlite':    'src/adapters/sqlite.ts',
     'adapters/postgres':  'src/adapters/postgres.ts',
+    'cli':                'src/cli/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,
