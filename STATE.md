@@ -2,7 +2,7 @@
 
 ## Current Slice
 
-**Slice 3 — React Components** (`feature/slice-3-react`)
+**Slice 4 — CLI Scaffolder** (`feature/slice-4-cli`)
 
 ## Completed
 
@@ -25,7 +25,7 @@
 - 17 vitest integration tests pass (32 total)
 - Zero TypeScript errors
 
-### Slice 3 — React Components (in progress) 🔄
+### Slice 3 — React Components ✅
 - `<SnipCreate>` — textarea, language input, expiry select, burn-on-read checkbox, submit
 - `<SnipView>` — fetches snip, async shiki highlighting, expiry countdown, 404/410 states
 - Both accept `className` prop and forward to root element
@@ -33,6 +33,7 @@
 - No bundled CSS — styles are className-only
 - Client components (`'use client'`)
 - shiki loaded async with plain-text fallback while loading
+- SnipView useEffect deps array fixed — expression extracted to `highlightTrigger` const, no lint suppression
 
 ## Files Changed
 
@@ -58,16 +59,16 @@ package.json            — next@14 as devDependency
 ### Slice 3
 ```
 src/react/SnipCreate.tsx — create form component
-src/react/SnipView.tsx   — view/highlight component
+src/react/SnipView.tsx   — view/highlight component (useEffect deps fixed)
 src/react/index.tsx      — barrel export with JSDoc
 package.json             — shiki, @types/react, @types/react-dom
-tsconfig.json            — jsx: react-jsx
-tsup.config.ts           — shiki added to external
+tsconfig.json           — jsx: react-jsx
+tsup.config.ts          — shiki added to external
 ```
 
 ## Next
 
-- **Slice 3** — run vitest, run build, commit, merge, kick off Slice 4 (CLI scaffolder)
+- **Slice 4** — CLI scaffolder: `npx @cyguin/sniplet init`, file generation, `--force` flag, Next.js App Router detection
 
 ## Open Questions
 

@@ -96,15 +96,19 @@ export function SnipView({ id, apiBase = '/api/snips', className = '', variant =
     fetchSnip()
   }, [fetchSnip])
 
+  const highlightTrigger = state.status === 'success' ? state.snip.content : null
+
   useEffect(() => {
     if (state.status !== 'success') return
     setHighlighterLoading(true)
+    const snip = state.snip
+    const content = snip.content
     getHighlighter()
       .then(async (highlighter) => {
-        const lang = state.snip.language ?? 'text'
+        const lang = snip.language ?? 'text'
         const loadedLangs = highlighter.getLoadedLanguages()
         const finalLang = loadedLangs.includes(lang as Parameters<typeof highlighter.getLoadedLanguages>[number]) ? lang : 'text'
-        const html = highlighter.codeToHtml(state.snip.content, {
+        const html = highlighter.codeToHtml(content, {
           lang: finalLang,
           theme: 'github-light',
         })
@@ -112,12 +116,11 @@ export function SnipView({ id, apiBase = '/api/snips', className = '', variant =
       })
       .catch(() => {
         setHighlightedHtml(
-          `<pre><code>${state.snip.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`,
+          `<pre><code>${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`,
         )
       })
       .finally(() => setHighlighterLoading(false))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.status === 'success' ? state.snip.content : null])
+  }, [highlightTrigger])
 
   const baseClasses = 'sniplet-view'
   const tailwindClasses = variant === 'tailwind' ? 'max-w-2xl' : ''
