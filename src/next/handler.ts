@@ -60,31 +60,39 @@ export function createSnipletHandler(config: SnipletConfig) {
     request: NextRequest,
     context: { params?: { sniplet?: string[] } },
   ): Promise<NextResponse> {
-    const segments = context.params?.sniplet ?? []
-    const method = request.method
+    try {
+      const segments = context.params?.sniplet ?? []
+      const method = request.method
 
-    if (method === 'POST' && segments.length === 0) {
-      if (rateLimit) {
-        const result = checkRateLimit(request, rateLimit.window, rateLimit.max)
-        if (result === 'rate_limited') {
-          return NextResponse.json(
-            { error: 'too many requests' },
-            { status: 429 },
-          )
+      if (method === 'POST' && segments.length === 0) {
+        if (rateLimit) {
+          const result = checkRateLimit(request, rateLimit.window, rateLimit.max)
+          if (result === 'rate_limited') {
+            return NextResponse.json(
+              { error: 'too many requests' },
+              { status: 429 },
+            )
+          }
         }
+        return await handleCreate(request, { adapter, maxLength, defaultExpiry })
       }
-      return handleCreate(request, { adapter, maxLength, defaultExpiry })
-    }
 
-    if (method === 'GET' && segments.length === 1) {
-      return handleGet(segments[0], adapter)
-    }
+      if (method === 'GET' && segments.length === 1) {
+        return await handleGet(segments[0], adapter)
+      }
 
-    if (method === 'DELETE' && segments.length === 1) {
-      return handleDelete(segments[0], adapter)
-    }
+      if (method === 'DELETE' && segments.length === 1) {
+        return await handleDelete(segments[0], adapter)
+      }
 
-    return NextResponse.json({ error: 'not found' }, { status: 404 })
+      return NextResponse.json({ error: 'not found' }, { status: 404 })
+    } catch (err) {
+      console.error('[sniplet] handler error:', err)
+      return NextResponse.json(
+        { error: 'internal server error' },
+        { status: 500 },
+      )
+    }
   }
 }
 
