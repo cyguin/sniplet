@@ -18,9 +18,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@cyguin/sniplet": ["../../src/index.ts"],
-      "@cyguin/sniplet/*": ["../../src/*"]
+      "@/*": ["./*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
