@@ -25,6 +25,10 @@ function rowToSnip(row: DbRow): Snip {
   }
 }
 
+/**
+ * SQLite adapter using better-sqlite3. Thread-safe, WAL mode enabled.
+ * Idempotent migration runs on first use.
+ */
 export class SQLiteAdapter implements SnipletAdapter {
   private db: Database.Database
 

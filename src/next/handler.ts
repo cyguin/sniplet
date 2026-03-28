@@ -41,6 +41,14 @@ function snipToJson(snip: Snip): Record<string, unknown> {
   }
 }
 
+/**
+ * Creates a Next.js App Router route handler for snips.
+ *
+ * Handles:
+ * - POST /           → create a snip
+ * - GET  /[id]       → retrieve a snip (burns if burn-on-read)
+ * - DELETE /[id]     → delete a snip
+ */
 export function createSnipletHandler(config: SnipletConfig) {
   const adapter = config.adapter
   const opts = config.options ?? {}

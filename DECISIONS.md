@@ -12,6 +12,8 @@
 
 **Rationale:** The adapter silently succeeds on delete of non-existent snips. The spec requires 404 for DELETE on unknown snip. The most minimal fix is a pre-check in the handler layer. This doesn't affect the adapter interface and keeps the change localized.
 
+**Note:** The `get()` + `delete()` sequence has a theoretical TOCTOU race window. Acceptable for v1 — no auth boundary depends on this check. Revisit if `adapter.delete()` is ever given a return value in a future slice.
+
 ---
 
 ### Rate limiter fails open on unknown IP
