@@ -1,7 +1,7 @@
 import { createSnipletHandler } from '@cyguin/sniplet/next'
-import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
+import { PostgresAdapter } from '@cyguin/sniplet/adapters/postgres'
 
-const adapter = new SQLiteAdapter(process.env.SNIPLET_DB_PATH ?? './data/sniplet.db')
+const adapter = new PostgresAdapter(process.env.DATABASE_URL ?? '')
 
 const handler = createSnipletHandler({ adapter })
 
