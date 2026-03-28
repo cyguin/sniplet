@@ -1,0 +1,32 @@
+{
+  "name": "@cyguin/sniplet",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Drop-in snippet sharing for Next.js apps",
+  "license": "MIT",
+  "exports": {
+    ".": "./dist/index.js",
+    "./next": "./dist/next/index.js",
+    "./react": "./dist/react/index.js",
+    "./adapters/sqlite": "./dist/adapters/sqlite.js",
+    "./adapters/postgres": "./dist/adapters/postgres.js"
+  },
+  "files": ["dist"],
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "next": ">=14"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.7",
+    "better-sqlite3": "^9.6.0",
+    "postgres": "^3.4.8"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.5.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.1"
+  }
+}
