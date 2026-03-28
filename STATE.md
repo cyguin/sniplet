@@ -4,6 +4,23 @@
 
 **Slice 5 — DX Polish** (`feature/slice-5-dx`) — complete
 
+## Slice 5 — Bugs Fixed (post-DX session)
+
+**Critical: Zero-segment route bug**
+Next.js App Router does not route `GET/POST /api/snips` (zero segments) to `[...sniplet]`. Fixed by adding `app/api/snips/route.ts` co-located with `app/api/snips/[...sniplet]/route.ts`. Both export the same handler and work together.
+
+**CLI fixes**
+- Now generates both `app/api/snips/route.ts` and `app/api/snips/[...sniplet]/route.ts`
+- Fixed `SNIPLET_DB_PATH` default to `./data/sniplet.db`
+- Fixed React 19 `use(params)` pattern → Next.js 14-compatible `params` props in `SNIP_PAGE` template
+- Removed `.js` from local imports in `src/next/types.ts`
+
+**Example app fixes**
+- Added `"type": "module"` to package.json (fixes Node.js ESM warning)
+- Removed debug `app/api/test/route.ts`
+
+**Smoke QA results**: 3 routes tested (all PASS), burn-on-read verified (first=200, second=410), form submission works, navigation to `/snips/[id]` works.
+
 ## Completed
 
 ### Slice 1 — Core Domain ✅
