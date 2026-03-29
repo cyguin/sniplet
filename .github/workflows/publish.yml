@@ -27,4 +27,4 @@ jobs:
         run: ./node_modules/.bin/tsup --no-dts
 
       - name: Publish
-        run: npm publish --provenance --access public --dry-run
+        run: npm publish --provenance --access public
