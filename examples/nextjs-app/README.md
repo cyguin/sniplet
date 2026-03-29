@@ -34,5 +34,5 @@ npm run dev
 
 Then visit [http://localhost:3000/snips](http://localhost:3000/snips).
 
-[**Live demo →**](https://sniplet-demo.vercel.app)
+[**Live demo →**](https://sniplet-sand.vercel.app)
 
