@@ -1,7 +1,6 @@
 {
   "name": "@cyguin/sniplet",
   "version": "0.1.5",
-  "private": true,
   "type": "module",
   "description": "Drop-in snippet sharing for Next.js apps",
   "license": "MIT",
