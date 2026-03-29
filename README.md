@@ -6,7 +6,7 @@ Drop-in snippet sharing for your Next.js app.
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
 
-[**Live Demo →**](https://sniplet-demo.vercel.app)
+[**Live Demo →**](https://sniplet-sand.vercel.app)
 
 ---
 
