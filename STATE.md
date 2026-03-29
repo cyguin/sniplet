@@ -2,7 +2,7 @@
 
 ## Current Slice
 
-**Deployment — LIVE** — `sniplet-7ojdaegxo-joepros-projects.vercel.app` ✅
+**Deployment — LIVE** — `sniplet-sand.vercel.app` ✅
 
 ## Deployment Fixes (ongoing)
 

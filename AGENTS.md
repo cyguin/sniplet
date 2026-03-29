@@ -307,7 +307,7 @@ export default defineConfig({
 **Scope:** `README.md`, `examples/nextjs-app/`, JSDoc on all public exports
 **Done when:**
 - README quickstart installs and wires sniplet in under 10 copy-paste lines
-- README has live demo link (`sniplet-demo.vercel.app`)
+- README has live demo link (`sniplet-sand.vercel.app`)
 - All public exports have JSDoc comments
 - Example Next.js app in `examples/nextjs-app/` runs locally with `npm run dev`
 - Example app uses SQLiteAdapter by default, PostgresAdapter via env var
