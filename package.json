@@ -1,8 +1,8 @@
 {
   "name": "@cyguin/sniplet",
-  "version": "0.1.4",
-  "type": "module",
+  "version": "0.1.5",
   "private": true,
+  "type": "module",
   "workspaces": [
     "examples/nextjs-app"
   ],
@@ -22,7 +22,6 @@
   "files": [
     "dist"
   ],
-
   "peerDependencies": {
     "next": ">=14",
     "react": ">=18",
