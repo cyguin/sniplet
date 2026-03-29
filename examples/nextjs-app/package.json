@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "postinstall": "sh -c 'cd ../.. && tsup --no-dts'",
-    "prebuild": "sh -c 'cd ../.. && tsup --no-dts'",
+    "postinstall": "node scripts/build-root.mjs",
+    "prebuild": "node scripts/build-root.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
