@@ -13,3 +13,4 @@ examples/nextjs-app/data/*.db-wal
 *.tgz
 cyguin-sniplet-*.tgz
 .vercel
+*.tsbuildinfo

@@ -3,9 +3,6 @@
   "version": "0.1.5",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "examples/nextjs-app"
-  ],
   "description": "Drop-in snippet sharing for Next.js apps",
   "license": "MIT",
   "bin": {
