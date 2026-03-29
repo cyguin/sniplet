@@ -4,6 +4,10 @@
   "type": "module",
   "description": "Drop-in snippet sharing for Next.js apps",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joeproit/sniplet"
+  },
   "bin": {
     "sniplet": "./dist/cli.js"
   },
