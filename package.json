@@ -1,8 +1,9 @@
 {
   "name": "@cyguin/sniplet",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
   "description": "Drop-in snippet sharing for Next.js apps",
+  "keywords": ["code-snippets", "pastebin", "nextjs", "snippet-sharing", "developer-tools", "syntax-highlighting"],
   "license": "MIT",
   "repository": {
     "type": "git",
