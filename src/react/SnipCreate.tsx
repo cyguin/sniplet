@@ -57,27 +57,27 @@ export function SnipCreate({
 
   const baseClasses = 'sniplet-create'
   const tailwindClasses = variant === 'tailwind'
-    ? 'flex flex-col gap-3 max-w-xl'
+    ? 'flex flex-col gap-3 max-w-3xl'
     : ''
   const rootClass = `${baseClasses} ${tailwindClasses} ${className}`.trim()
 
   const textareaClasses = variant === 'tailwind'
-    ? 'w-full p-3 border border-gray-300 rounded font-mono text-sm'
+    ? 'w-full p-4 border border-gray-700 rounded-lg font-mono text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-gray-950 text-gray-100 placeholder-gray-600'
     : ''
   const inputClasses = variant === 'tailwind'
-    ? 'w-full p-2 border border-gray-300 rounded text-sm'
+    ? 'flex-1 p-2 border border-gray-700 rounded text-sm bg-gray-900 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
     : ''
   const selectClasses = variant === 'tailwind'
-    ? 'p-2 border border-gray-300 rounded text-sm'
+    ? 'p-2 border border-gray-700 rounded text-sm bg-gray-900 text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500'
     : ''
   const checkboxClasses = variant === 'tailwind'
-    ? 'w-4 h-4'
+    ? 'w-4 h-4 accent-blue-500'
     : ''
   const labelClasses = variant === 'tailwind'
-    ? 'flex items-center gap-2 text-sm text-gray-700'
+    ? 'flex items-center gap-2 text-sm text-gray-400 whitespace-nowrap'
     : ''
   const buttonClasses = variant === 'tailwind'
-    ? 'px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50'
+    ? 'px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 disabled:opacity-40 transition-colors font-medium text-sm whitespace-nowrap ml-auto'
     : ''
 
   async function handleSubmit(e: FormEvent) {
@@ -121,7 +121,7 @@ export function SnipCreate({
         value={content}
         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
         placeholder="Paste your snippet here..."
-        rows={10}
+        rows={28}
         required
         className={textareaClasses || undefined}
         style={!variant ? {
@@ -134,73 +134,76 @@ export function SnipCreate({
         } : undefined}
       />
 
-      <input
-        type="text"
-        value={language}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setLanguage(e.target.value)}
-        placeholder="Language (e.g. typescript, python)"
-        className={inputClasses || undefined}
-        style={!variant ? {
-          width: '100%',
-          padding: '0.5rem',
-          fontSize: '0.875rem',
-          border: '1px solid #ccc',
-          borderRadius: '0.25rem',
-        } : undefined}
-      />
-
-      <select
-        value={expiry}
-        onChange={(e: ChangeEvent<HTMLSelectElement>) => setExpiry(e.target.value as ExpiryOption)}
-        className={selectClasses || undefined}
-        style={!variant ? {
-          padding: '0.5rem',
-          fontSize: '0.875rem',
-          border: '1px solid #ccc',
-          borderRadius: '0.25rem',
-        } : undefined}
-      >
-        {EXPIRY_OPTIONS.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-
-      <label className={labelClasses || undefined}>
+      <div className={variant === 'tailwind' ? 'flex items-center gap-3 flex-wrap' : ''}>
         <input
-          type="checkbox"
-          checked={burnOnRead}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setBurnOnRead(e.target.checked)}
-          className={checkboxClasses || undefined}
+          type="text"
+          value={language}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setLanguage(e.target.value)}
+          placeholder="Language (e.g. typescript, python)"
+          className={inputClasses || undefined}
+          style={!variant ? {
+            width: '100%',
+            padding: '0.5rem',
+            fontSize: '0.875rem',
+            border: '1px solid #ccc',
+            borderRadius: '0.25rem',
+          } : undefined}
         />
-        Burn after reading
-      </label>
 
-      {error && (
-        <p
-          style={!variant ? { color: '#dc2626', fontSize: '0.875rem' } : undefined}
-          className={variant === 'tailwind' ? 'text-red-600 text-sm' : ''}
+        <select
+          value={expiry}
+          onChange={(e: ChangeEvent<HTMLSelectElement>) => setExpiry(e.target.value as ExpiryOption)}
+          className={selectClasses || undefined}
+          style={!variant ? {
+            padding: '0.5rem',
+            fontSize: '0.875rem',
+            border: '1px solid #ccc',
+            borderRadius: '0.25rem',
+          } : undefined}
         >
-          {error}
-        </p>
-      )}
+          {EXPIRY_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
 
-      <button
-        type="submit"
-        disabled={submitting || !content}
-        className={buttonClasses || undefined}
-        style={!variant ? {
-          padding: '0.5rem 1rem',
-          backgroundColor: '#2563eb',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '0.25rem',
-          cursor: 'pointer',
-        } : undefined}
-      >
-        {submitting ? 'Creating...' : 'Create Snip'}
-      </button>
+        <label className={labelClasses || undefined}>
+          <input
+            type="checkbox"
+            checked={burnOnRead}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setBurnOnRead(e.target.checked)}
+            className={checkboxClasses || undefined}
+          />
+          Burn after reading
+        </label>
+
+        {error && (
+          <p
+            style={!variant ? { color: '#dc2626', fontSize: '0.875rem' } : undefined}
+            className={variant === 'tailwind' ? 'text-red-600 text-sm' : ''}
+          >
+            {error}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={submitting || !content}
+          className={buttonClasses || undefined}
+          style={!variant ? {
+            padding: '0.5rem 1rem',
+            backgroundColor: '#2563eb',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '0.25rem',
+            cursor: 'pointer',
+          } : undefined}
+        >
+          {submitting ? 'Creating...' : 'Create Snip'}
+        </button>
+      </div>
+
     </form>
   )
 }
