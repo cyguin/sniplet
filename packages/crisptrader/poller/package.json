@@ -1,0 +1,11 @@
+{
+  "name": "@cyguin/crisptrader-poller",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.0"
+  }
+}
