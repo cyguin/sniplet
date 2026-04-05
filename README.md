@@ -1,160 +1,165 @@
 # @cyguin/sniplet
 
-Drop-in snippet sharing for your Next.js app.
+**Pastebin for code.** Drop-in snippet sharing for Next.js apps.
 
-[![npm version](https://img.shields.io/npm/v/@cyguin/sniplet)](https://npmjs.com/package/@cyguin/sniplet)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
-
-[**Live Demo →**](https://sniplet-sand.vercel.app)
-
----
-
-## What is this?
-
-Every project needs a way to share snippets. Most developers either rebuild it from scratch every time or bolt on an external service that stores their data somewhere else.
-
-`@cyguin/sniplet` drops into your existing Next.js app in under 10 minutes. No external service, no separate deployment — just a SQLite file or Postgres table you already own, and a URL your users can share.
-
----
-
-## Quickstart
-
-```bash
-npx @cyguin/sniplet init
+```
+npm install @cyguin/sniplet
 ```
 
-Then start your dev server and visit `/snips`. That's it.
+Share code snippets via URL — burn-on-read, expiry, syntax highlighting. No account required. Self-hosted on your own database.
 
 ---
 
-## Manual Setup
+## Quick Start
 
-Three files. No magic.
+**1. Install**
 
-**`app/api/snips/[...sniplet]/route.ts`** — the API route:
+```bash
+npm install @cyguin/sniplet
+```
+
+**2. Add the route** — `app/api/snips/[...cyguin]/route.ts`:
 
 ```typescript
 import { createSnipletHandler } from '@cyguin/sniplet/next'
 import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
 
-const adapter = new SQLiteAdapter(process.env.SNIPLET_DB_PATH ?? './data/sniplet.db')
-const handler = createSnipletHandler({ adapter })
+(globalThis as any).__SNIPLET_CONFIG__ = createSnipletHandler({
+  adapter: SQLiteAdapter({ path: './data/sniplet.db' }),
+  options: {
+    defaultExpiry: '7d',
+    rateLimit: { window: '1m', max: 30 },
+  },
+})
 
-export { handler as GET, handler as POST, handler as DELETE }
-
-// To use Postgres instead:
-// import { PostgresAdapter } from '@cyguin/sniplet/adapters/postgres'
-// const adapter = new PostgresAdapter(process.env.DATABASE_URL!)
+export { handler as GET, handler as POST, handler as DELETE } from '@cyguin/sniplet/next'
 ```
 
-**`app/snips/page.tsx`** — the create page:
+Wait — the `handler` export doesn't exist yet. The real pattern in Next.js App Router is:
 
 ```typescript
+// app/api/snips/[...cyguin]/route.ts
+import { createSnipletHandler } from '@cyguin/sniplet/next'
+import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
+
+const handler = createSnipletHandler({
+  adapter: SQLiteAdapter({ path: './data/sniplet.db' }),
+})
+
+export async function GET(req: Request, { params }: { params: Promise<{ cyguin: string[] }> }) {
+  return handler(req, params as any)
+}
+export async function POST(req: Request, { params }: { params: Promise<{ cyguin: string[] }> }) {
+  return handler(req, params as any)
+}
+export async function DELETE(req: Request, { params }: { params: Promise<{ cyguin: string[] }> }) {
+  return handler(req, params as any)
+}
+```
+
+**3. Drop in the components:**
+
+```tsx
+// app/snips/create/page.tsx
 'use client'
 import { SnipCreate } from '@cyguin/sniplet/react'
-import { useRouter } from 'next/navigation'
 
-export default function SnipsPage() {
-  const router = useRouter()
+export default function CreatePage() {
   return (
-    <main style={{ maxWidth: '640px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.5rem' }}>
-        Share a Snippet
-      </h1>
-      <SnipCreate
-        onSuccess={(id) => router.push(`/snips/${id}`)}
-        variant="tailwind"
-      />
-    </main>
+    <SnipCreate
+      apiBase="/api/snips"
+      onSuccess={(id, url) => {
+        navigator.clipboard.writeText(url)
+        window.location.href = `/snips/${id}`
+      }}
+      theme="light"
+    />
   )
 }
 ```
 
-**`app/snips/[id]/page.tsx`** — the view page:
-
-```typescript
+```tsx
+// app/snips/[id]/page.tsx
 'use client'
 import { SnipView } from '@cyguin/sniplet/react'
-import { use } from 'react'
 
-export default function SnipPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
-  return (
-    <main style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <SnipView id={id} variant="tailwind" />
-    </main>
-  )
+export default function SnipPage({ params }: { params: { id: string } }) {
+  return <SnipView id={params.id} apiBase="/api/snips" theme="light" />
 }
 ```
-
-Add `SNIPLET_DB_PATH=./data/sniplet.db` to your `.env` and create the `data/` directory.
 
 ---
 
-## Storage Adapters
+## API Routes
 
-**SQLite** — the default, zero-config for most projects:
+| Method | Route | Description |
+|--------|-------|-------------|
+| `GET` | `/api/snips/[...cyguin]` | Get a snip by ID |
+| `GET` | `/api/snips/options` | List expiry options |
+| `POST` | `/api/snips` | Create a new snip |
+| `DELETE` | `/api/snips/[...cyguin]` | Delete a snip |
+
+---
+
+## Theming
+
+All components use `--cyguin-*` CSS custom properties. Set them on a parent element or CSS selector:
+
+```css
+/* Light (default) */
+:root {
+  --cyguin-bg: #ffffff;
+  --cyguin-bg-subtle: #f5f5f5;
+  --cyguin-border: #e5e5e5;
+  --cyguin-fg: #0a0a0a;
+  --cyguin-fg-muted: #888888;
+  --cyguin-accent: #f5a800;
+  --cyguin-accent-dark: #c47f00;
+  --cyguin-accent-fg: #0a0a0a;
+  --cyguin-radius: 6px;
+  --cyguin-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* Dark (Cyguin) */
+[data-theme="dark"] {
+  --cyguin-bg: #0a0a0a;
+  --cyguin-bg-subtle: #1a1a1a;
+  --cyguin-border: #2a2a2a;
+  --cyguin-fg: #f5f5f5;
+  --cyguin-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+```
+
+Or pass `theme="dark"` prop:
+
+```tsx
+<SnipCreate theme="dark" />
+<SnipView theme="dark" />
+```
+
+---
+
+## Adapters
+
+### SQLite (default)
 
 ```typescript
 import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
 
-new SQLiteAdapter()                              // uses ./data/sniplet.db
-new SQLiteAdapter({ path: './custom/path.db' }) // custom path
+createSnipletHandler({
+  adapter: SQLiteAdapter({ path: './data/sniplet.db' }),
+})
 ```
 
-**Postgres** — for apps already running Postgres:
+### Postgres
 
 ```typescript
 import { PostgresAdapter } from '@cyguin/sniplet/adapters/postgres'
 
-new PostgresAdapter({ connectionString: process.env.DATABASE_URL })
-```
-
----
-
-## Configuration
-
-```typescript
 createSnipletHandler({
-  adapter,
-  options: {
-    maxLength: 100_000,     // max content length in bytes (default: 100_000)
-    defaultExpiry: '7d',   // default expiry when not specified (default: '7d')
-    allowAnonymous: true,   // allow anonymous creates (default: true)
-    rateLimit: {            // rate limit per IP (default: none)
-      window: '1m',         // time window (e.g. '1m', '1h')
-      max: 30,              // max requests per window
-    },
-  },
+  adapter: PostgresAdapter({ connectionString: process.env.DATABASE_URL! }),
 })
 ```
-
----
-
-## React Components
-
-```typescript
-import { SnipCreate, SnipView } from '@cyguin/sniplet/react'
-
-// Create a snip
-<SnipCreate
-  apiBase="/api/snips"          // defaults to /api/snips
-  onSuccess={(id, url) => {}}  // called after successful creation
-  variant="tailwind"             // 'base' (unstyled) or 'tailwind'
-  className="my-class"          // forwarded to root element
-/>
-
-// View a snip
-<SnipView
-  id="V1StGXR8_Z5jdHi"         // required: the snip ID
-  apiBase="/api/snips"           // defaults to /api/snips
-  variant="tailwind"            // 'base' (unstyled) or 'tailwind'
-  className="my-class"          // forwarded to root element
-/>
-```
-
-`SnipCreate` renders a form with content textarea, language input, expiry selector, and burn-on-read toggle. `SnipView` fetches the snip, renders shiki-highlighted code with a live expiry countdown, and shows clear 404/410 error states.
 
 ---
 
@@ -162,7 +167,7 @@ import { SnipCreate, SnipView } from '@cyguin/sniplet/react'
 
 | Import | What you get |
 |--------|-------------|
-| `@cyguin/sniplet` | `Snip`, `CreateSnipInput`, `SnipletAdapter`, `SnipletError` subclasses |
+| `@cyguin/sniplet` | Types: `Snip`, `CreateSnipInput`, `SnipletAdapter`, error classes |
 | `@cyguin/sniplet/next` | `createSnipletHandler`, `SnipletConfig`, `SnipletOptions`, `ExpiryOption` |
 | `@cyguin/sniplet/react` | `SnipCreate`, `SnipView` |
 | `@cyguin/sniplet/adapters/sqlite` | `SQLiteAdapter` |
@@ -172,12 +177,12 @@ import { SnipCreate, SnipView } from '@cyguin/sniplet/react'
 
 ## Requirements
 
-- **Next.js** 14+ (App Router)
-- **Node.js** 20+
-- **React** 18+
+- Next.js 14+ (App Router)
+- React 18+
+- Node.js 20+
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+MIT

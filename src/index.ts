@@ -1,2 +1,17 @@
-export type { SnipletAdapter, Snip, CreateSnipInput } from './core/types'
-export { SnipletError, SnipNotFoundError, SnipAlreadyBurnedError, SnipExpiredError } from './core/errors'
+export type {
+  Snip,
+  CreateSnipInput,
+  SnipletOptions,
+  SnipletConfig,
+  ExpiryOption,
+} from './types'
+
+export {
+  SnipletError,
+  SnipNotFoundError,
+  SnipExpiredError,
+  SnipBurnedError,
+  RateLimitError,
+} from './types'
+
+export type { SnipletAdapter } from './types'
