@@ -114,7 +114,7 @@ Every package follows the next-auth / uploadthing pattern:
 
 **Status:** Published v0.1.6 on npm — 283 downloads/week  
 **Repo:** https://github.com/joeproit/sniplet (separate from project23 monorepo)  
-**Note:** This package has its own repo and release cycle — not managed through project23.
+**In overhaul:** Target v0.2.0 — reabsorb into project23, migrate route to `[...cyguin]`, apply `--cyguin-*` theme tokens. See `docs/swarm/sniplet/SPEC.md`.
 
 **Quickstart:** `npx @cyguin/sniplet init` then visit `/snips`
 
@@ -488,7 +488,7 @@ CREATE TABLE survey_responses (
 
 | Priority | Package | Status | Path |
 |----------|---------|--------|------|
-| 1 | @cyguin/sniplet | Published v0.1.6 | npm — separate repo |
+| 1 | @cyguin/sniplet | Overhaul: v0.2.0 | project23 — `[...cyguin]` + theming |
 | 2 | @cyguin/changelog | Built, pre-publish | npm |
 | 3 | @cyguin/flag | Built, pre-publish | npm |
 | 4 | @cyguin/feedback | Scoped, not built | npm |
@@ -544,7 +544,7 @@ Pass `schema` to `drizzle()` call to enable `.query.users.findFirst()` pattern.
 
 | Package | Issue | Blocker |
 |---------|-------|---------|
+| sniplet | v0.1.6 on npm, separate repo — needs reabsorb + overhaul | Launch sniplet overhaul |
 | changelog | Needs NPM_TOKEN secret in Forgejo | Publish |
 | flag | Needs NPM_TOKEN secret in Forgejo | Publish |
-| all packages | Theme tokens (--cyguin-*) not yet applied | Cleanup |
-| crisptrader | Needs review — is it npm package or Path B SaaS? | Classification |
+| crisptrader | Full Next.js app, private: true — Path B SaaS | Classification |
