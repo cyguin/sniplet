@@ -1,141 +1,91 @@
-import Database from 'better-sqlite3'
-import { nanoid } from 'nanoid'
-import type { SnipletAdapter, Snip, CreateSnipInput } from '../core/types'
-import { SnipNotFoundError, SnipAlreadyBurnedError, SnipExpiredError } from '../core/errors'
+import type { SnipletAdapter } from '../types'
+import type { Snip } from '../types'
 
-interface DbRow {
-  id: string
-  content: string
-  language: string | null
-  expires_at: string | null
-  burn_on_read: number
-  burned_at: string | null
-  created_at: string
+export interface SQLiteAdapterOptions {
+  path?: string
 }
 
-function rowToSnip(row: DbRow): Snip {
-  return {
-    id: row.id,
-    content: row.content,
-    language: row.language,
-    expiresAt: row.expires_at ? new Date(row.expires_at) : null,
-    burnOnRead: Boolean(row.burn_on_read),
-    burnedAt: row.burned_at ? new Date(row.burned_at) : null,
-    createdAt: new Date(row.created_at),
-  }
-}
-
-/**
- * SQLite adapter using better-sqlite3. Thread-safe, WAL mode enabled.
- * Idempotent migration runs on first use.
- *
- * @example
- * ```typescript
- * import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
- * const adapter = new SQLiteAdapter('./data/snips.db')
- * ```
- */
-export class SQLiteAdapter implements SnipletAdapter {
-  private db: Database.Database
-
-  /**
-   * Creates a new SQLiteAdapter.
-   *
-   * @param filename - Path to the SQLite database file. Use `:memory:` for an
-   *   in-memory database (useful for tests).
-   */
-  constructor(filename: string) {
-    this.db = new Database(filename)
-    this.db.pragma('journal_mode = WAL')
-    this.migrate()
+export function SQLiteAdapter(options: SQLiteAdapterOptions = {}): SnipletAdapter {
+  let db: any
+  try {
+    const Database = require('better-sqlite3')
+    const dbPath = (options as any).path ?? './data/sniplet.db'
+    db = new Database(dbPath)
+    db.pragma('journal_mode = WAL')
+  } catch {
+    throw new Error('better-sqlite3 is required. Install with: npm install better-sqlite3')
   }
 
-  private migrate(): void {
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS sniplet_snips (
-        id            TEXT PRIMARY KEY,
-        content       TEXT NOT NULL,
-        language      TEXT,
-        expires_at    TEXT,
-        burn_on_read  INTEGER DEFAULT 0,
-        burned_at     TEXT,
-        created_at    TEXT DEFAULT (datetime('now'))
-      );
-
-      CREATE INDEX IF NOT EXISTS sniplet_expires_idx
-        ON sniplet_snips(expires_at)
-        WHERE expires_at IS NOT NULL;
-    `)
-  }
-
-  async create(input: CreateSnipInput): Promise<Snip> {
-    const id = nanoid(12)
-    const now = new Date().toISOString()
-
-    this.db.prepare(`
-      INSERT INTO sniplet_snips (id, content, language, expires_at, burn_on_read, created_at)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).run(
-      id,
-      input.content,
-      input.language ?? null,
-      input.expiresAt?.toISOString() ?? null,
-      input.burnOnRead ? 1 : 0,
-      now
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS snips (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      language TEXT NOT NULL,
+      content TEXT NOT NULL,
+      burn_on_read INTEGER NOT NULL DEFAULT 0,
+      expires_at INTEGER,
+      view_count INTEGER NOT NULL DEFAULT 0,
+      created_at INTEGER NOT NULL
     )
+  `)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS snip_access (
+      ip TEXT NOT NULL,
+      timestamp INTEGER NOT NULL
+    )
+  `)
 
-    const row = this.db.prepare('SELECT * FROM sniplet_snips WHERE id = ?').get(id) as DbRow
-    return rowToSnip(row)
-  }
+  return {
+    async create(input: Snip): Promise<Snip> {
+      const stmt = db.prepare(`
+        INSERT INTO snips (id, title, language, content, burn_on_read, expires_at, view_count, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, 0, ?)
+      `)
+      stmt.run(
+        input.id,
+        input.title,
+        input.language,
+        input.content,
+        input.burn_on_read ? 1 : 0,
+        input.expires_at,
+        input.created_at
+      )
+      return { ...input, view_count: 0 }
+    },
 
-  async get(id: string): Promise<Snip> {
-    const row = this.db.prepare('SELECT * FROM sniplet_snips WHERE id = ?').get(id) as DbRow | undefined
-
-    if (!row) {
-      throw new SnipNotFoundError(id)
-    }
-
-    if (row.burned_at !== null) {
-      throw new SnipAlreadyBurnedError(id)
-    }
-
-    if (row.burn_on_read) {
-      const tx = this.db.transaction((txId: string, now: string) => {
-        const result = this.db.prepare(`
-          UPDATE sniplet_snips
-          SET burned_at = ?
-          WHERE id = ? AND burn_on_read = 1 AND burned_at IS NULL
-        `).run(now, txId)
-        return result.changes > 0
-      })
-
-      const wasBurned = tx(id, new Date().toISOString())
-      if (!wasBurned) {
-        throw new SnipAlreadyBurnedError(id)
+    async findById(id: string): Promise<Snip | null> {
+      const stmt = db.prepare('SELECT * FROM snips WHERE id = ?')
+      const row: any = stmt.get(id)
+      if (!row) return null
+      return {
+        ...row,
+        burn_on_read: Boolean(row.burn_on_read),
       }
-      return rowToSnip(row)
-    }
+    },
 
-    if (row.expires_at !== null && new Date(row.expires_at) < new Date()) {
-      throw new SnipExpiredError(id)
-    }
+    async incrementViews(id: string): Promise<void> {
+      const stmt = db.prepare('UPDATE snips SET view_count = view_count + 1 WHERE id = ?')
+      stmt.run(id)
+    },
 
-    return rowToSnip(row)
-  }
+    async delete(id: string): Promise<void> {
+      const stmt = db.prepare('DELETE FROM snips WHERE id = ?')
+      stmt.run(id)
+    },
 
-  async delete(id: string): Promise<void> {
-    this.db.prepare('DELETE FROM sniplet_snips WHERE id = ?').run(id)
-  }
+    async listByIp(ip: string, windowMs: number, limit: number): Promise<number> {
+      const cutoff = Date.now() - windowMs
+      const stmt = db.prepare(
+        'SELECT COUNT(*) as count FROM snip_access WHERE ip = ? AND timestamp > ?'
+      )
+      const row: any = stmt.get(ip, cutoff)
+      return row?.count ?? 0
+    },
 
-  async sweep(): Promise<number> {
-    const now = new Date().toISOString()
-    const result = this.db.prepare(`
-      DELETE FROM sniplet_snips WHERE expires_at IS NOT NULL AND expires_at < ?
-    `).run(now)
-    return result.changes
-  }
-
-  close(): void {
-    this.db.close()
+    async recordAccess(ip: string, windowMs: number): Promise<void> {
+      const cutoff = Date.now() - windowMs
+      db.prepare('DELETE FROM snip_access WHERE ip = ? AND timestamp < ?').run(ip, cutoff)
+      db.prepare('INSERT INTO snip_access (ip, timestamp) VALUES (?, ?)').run(ip, Date.now())
+    },
   }
 }

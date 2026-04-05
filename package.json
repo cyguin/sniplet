@@ -1,49 +1,53 @@
 {
   "name": "@cyguin/sniplet",
-  "version": "0.1.6",
+  "version": "0.2.0",
+  "description": "Pastebin for code. Drop-in snippet sharing for Next.js with syntax highlighting, burn-on-read, and expiry.",
   "type": "module",
-  "description": "Drop-in snippet sharing for Next.js apps",
-  "keywords": ["code-snippets", "pastebin", "nextjs", "snippet-sharing", "developer-tools", "syntax-highlighting"],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/joeproit/sniplet"
-  },
-  "bin": {
-    "sniplet": "./dist/cli.js"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./next": "./dist/next/index.js",
-    "./react": "./dist/react/index.js",
-    "./adapters/sqlite": "./dist/adapters/sqlite.js",
-    "./adapters/postgres": "./dist/adapters/postgres.js"
-  },
   "main": "./dist/index.js",
-  "files": [
-    "dist"
-  ],
-  "peerDependencies": {
-    "next": ">=14",
-    "react": ">=18",
-    "react-dom": ">=18"
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./next": {
+      "import": "./dist/next.js",
+      "types": "./dist/next.d.ts"
+    },
+    "./react": {
+      "import": "./dist/react.js",
+      "types": "./dist/react.d.ts"
+    },
+    "./adapters/sqlite": {
+      "import": "./dist/adapters/sqlite.js",
+      "types": "./dist/adapters/sqlite.d.ts"
+    },
+    "./adapters/postgres": {
+      "import": "./dist/adapters/postgres.js",
+      "types": "./dist/adapters/postgres.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
-    "nanoid": "^5.1.7",
-    "postgres": "^3.4.8",
+    "nanoid": "^5.0.0",
     "shiki": "^1.0.0"
   },
-  "optionalDependencies": {
-    "better-sqlite3": "^9.6.0"
-  },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/node": "^25.5.0",
+    "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
-    "next": "^14.2.35",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "vitest": "^1.6.1"
-  }
+    "react": "^18.3.0",
+    "typescript": "^5.3.0",
+    "tsup": "^8.0.0"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0",
+    "react": ">=18.0.0"
+  },
+  "keywords": ["pastebin", "snippet", "code", "nextjs", "syntax-highlighting"],
+  "license": "MIT"
 }

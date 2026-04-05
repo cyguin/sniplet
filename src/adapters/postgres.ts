@@ -1,147 +1,67 @@
-import postgres from 'postgres'
-import { nanoid } from 'nanoid'
-import type { SnipletAdapter, Snip, CreateSnipInput } from '../core/types'
-import { SnipNotFoundError, SnipAlreadyBurnedError, SnipExpiredError } from '../core/errors'
+import type { SnipletAdapter } from '../types'
+import type { Snip } from '../types'
 
-interface DbSnip {
-  id: string
-  content: string
-  language: string | null
-  expires_at: Date | null
-  burn_on_read: boolean
-  burned_at: Date | null
-  created_at: Date
+export interface PostgresAdapterOptions {
+  connectionString: string
 }
 
-function rowToSnip(row: DbSnip): Snip {
+export function PostgresAdapter(options: PostgresAdapterOptions): SnipletAdapter {
+  let pool: any
+  try {
+    const { Pool } = require('pg')
+    pool = new Pool({ connectionString: options.connectionString })
+  } catch {
+    throw new Error('pg is required. Install with: npm install pg')
+  }
+
   return {
-    id: row.id,
-    content: row.content,
-    language: row.language,
-    expiresAt: row.expires_at,
-    burnOnRead: row.burn_on_read,
-    burnedAt: row.burned_at,
-    createdAt: row.created_at,
-  }
-}
-
-/**
- * Postgres adapter using porsager/postgres. Atomic burn-on-read via
- * UPDATE ... RETURNING. Idempotent migration runs on first use.
- *
- * @example
- * ```typescript
- * import { PostgresAdapter } from '@cyguin/sniplet/adapters/postgres'
- * const adapter = new PostgresAdapter(process.env.DATABASE_URL!)
- * ```
- */
-export class PostgresAdapter implements SnipletAdapter {
-  private sql: ReturnType<typeof postgres>
-  private migrated = false
-
-  /**
-   * Creates a new PostgresAdapter.
-   *
-   * @param connectionString - A standard Postgres connection string, e.g.
-   *   `postgres://user:password@localhost:5432/sniplet`.
-   */
-  constructor(connectionString: string) {
-    this.sql = postgres(connectionString)
-  }
-
-  private async ensureMigrated(): Promise<void> {
-    if (this.migrated) return
-    this.migrated = true
-    await this.sql`
-      CREATE TABLE IF NOT EXISTS sniplet_snips (
-        id            TEXT PRIMARY KEY,
-        content       TEXT NOT NULL,
-        language      TEXT,
-        expires_at    TIMESTAMPTZ,
-        burn_on_read  BOOLEAN DEFAULT FALSE,
-        burned_at     TIMESTAMPTZ,
-        created_at    TIMESTAMPTZ DEFAULT NOW()
-      );
-    `
-    await this.sql`
-      CREATE INDEX IF NOT EXISTS sniplet_expires_idx
-        ON sniplet_snips(expires_at)
-        WHERE expires_at IS NOT NULL;
-    `
-  }
-
-  async create(input: CreateSnipInput): Promise<Snip> {
-    await this.ensureMigrated()
-    const id = nanoid(12)
-
-    const [row] = await this.sql<[DbSnip]>`
-      INSERT INTO sniplet_snips (id, content, language, expires_at, burn_on_read)
-      VALUES (
-        ${id},
-        ${input.content},
-        ${input.language ?? null},
-        ${input.expiresAt ?? null},
-        ${input.burnOnRead ?? false}
+    async create(input: Snip): Promise<Snip> {
+      const result = await pool.query(
+        `INSERT INTO snips (id, title, language, content, burn_on_read, expires_at, view_count, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, 0, $7)
+         RETURNING *`,
+        [
+          input.id,
+          input.title,
+          input.language,
+          input.content,
+          input.burn_on_read,
+          input.expires_at,
+          input.created_at,
+        ]
       )
-      RETURNING *
-    `
+      const row = result.rows[0]
+      return { ...row, burn_on_read: Boolean(row.burn_on_read) }
+    },
 
-    return rowToSnip(row)
-  }
+    async findById(id: string): Promise<Snip | null> {
+      const result = await pool.query('SELECT * FROM snips WHERE id = $1', [id])
+      if (!result.rows[0]) return null
+      const row = result.rows[0]
+      return { ...row, burn_on_read: Boolean(row.burn_on_read) }
+    },
 
-  async get(id: string): Promise<Snip> {
-    await this.ensureMigrated()
-    const [row] = await this.sql<[DbSnip | undefined]>`
-      SELECT * FROM sniplet_snips WHERE id = ${id}
-    `
+    async incrementViews(id: string): Promise<void> {
+      await pool.query('UPDATE snips SET view_count = view_count + 1 WHERE id = $1', [id])
+    },
 
-    if (!row) {
-      throw new SnipNotFoundError(id)
-    }
+    async delete(id: string): Promise<void> {
+      await pool.query('DELETE FROM snips WHERE id = $1', [id])
+    },
 
-    if (row.burned_at !== null) {
-      throw new SnipAlreadyBurnedError(id)
-    }
+    async listByIp(ip: string, windowMs: number, limit: number): Promise<number> {
+      const cutoff = Date.now() - windowMs
+      const result = await pool.query(
+        'SELECT COUNT(*) as count FROM snip_access WHERE ip = $1 AND timestamp > $2',
+        [ip, cutoff]
+      )
+      return parseInt(result.rows[0]?.count ?? 0)
+    },
 
-    if (row.burn_on_read) {
-      const [burned] = await this.sql<[DbSnip | undefined]>`
-        UPDATE sniplet_snips
-        SET burned_at = NOW()
-        WHERE id = ${id}
-          AND burn_on_read = TRUE
-          AND burned_at IS NULL
-        RETURNING *
-      `
-
-      if (!burned) {
-        throw new SnipAlreadyBurnedError(id)
-      }
-
-      return rowToSnip(burned)
-    }
-
-    if (row.expires_at !== null && row.expires_at < new Date()) {
-      throw new SnipExpiredError(id)
-    }
-
-    return rowToSnip(row)
-  }
-
-  async delete(id: string): Promise<void> {
-    await this.ensureMigrated()
-    await this.sql`DELETE FROM sniplet_snips WHERE id = ${id}`
-  }
-
-  async sweep(): Promise<number> {
-    await this.ensureMigrated()
-    const result = await this.sql`
-      DELETE FROM sniplet_snips
-      WHERE expires_at IS NOT NULL AND expires_at < NOW()
-    `
-    return result.count ?? 0
-  }
-
-  async close(): Promise<void> {
-    await this.sql.end()
+    async recordAccess(ip: string, windowMs: number): Promise<void> {
+      const cutoff = Date.now() - windowMs
+      await pool.query('DELETE FROM snip_access WHERE ip = $1 AND timestamp < $2', [ip, cutoff])
+      await pool.query('INSERT INTO snip_access (ip, timestamp) VALUES ($1, $2)', [ip, Date.now()])
+    },
   }
 }
