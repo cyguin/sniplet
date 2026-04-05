@@ -110,7 +110,7 @@ Every package follows the next-auth / uploadthing pattern:
 
 ### @cyguin/sniplet
 
-**What it is:** Code snippet manager. Drop-in snippet sharing for Next.js apps — create, share, and render syntax-highlighted code snippets with burn-on-read and expiry support.
+**What it is:** Pastebin for code. Drop-in snippet sharing for Next.js — like a private, self-hosted Pastebin with syntax highlighting, burn-on-read, and expiry. Share code snippets with a URL, no account required.
 
 **Status:** Published v0.1.6 on npm — 283 downloads/week  
 **Repo:** https://github.com/joeproit/sniplet (separate from project23 monorepo)  

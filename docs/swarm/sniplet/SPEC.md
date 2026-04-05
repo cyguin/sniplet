@@ -4,7 +4,7 @@
 
 ## Problem
 
-The published `@cyguin/sniplet` v0.1.6 (283 downloads/week) was built with a different architecture than the rest of the Cyguin suite. It's in a separate repo (`joeproit/sniplet`) and doesn't follow the planned `[...cyguin]` catch-all route pattern. It needs to be reabsorbed into `project23` with proper Cyguin suite conventions applied.
+`@cyguin/sniplet` is a pastebin for code. It's a self-hosted alternative to Pastebin, Ghostbin, or hastebin — drop it into any Next.js app and you can share code snippets via URL with burn-on-read and expiry. The published v0.1.6 (283 downloads/week) works but was built with a different architecture than the rest of the Cyguin suite — separate repo, different route pattern, no theming. It needs to be reabsorbed into `project23` with proper `[...cyguin]` routes and `--cyguin-*` tokens applied.
 
 ## Goal
 
