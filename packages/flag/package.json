@@ -1,0 +1,49 @@
+{
+  "name": "@cyguin/flag",
+  "version": "0.1.0",
+  "description": "Drop-in feature flags for Next.js with database-backed rollouts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./server": {
+      "import": "./dist/server.js",
+      "types": "./dist/server.d.ts"
+    },
+    "./react": {
+      "import": "./dist/react.js",
+      "types": "./dist/react.d.ts"
+    },
+    "./db": {
+      "import": "./dist/db.js",
+      "types": "./dist/db.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.29.0",
+    "@libsql/client": "^0.4.0",
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.10.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0",
+    "react": ">=18.0.0"
+  },
+  "keywords": ["feature-flags", "nextjs", "rollout", "feature-toggles"],
+  "license": "MIT"
+}
