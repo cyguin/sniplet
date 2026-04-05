@@ -110,29 +110,44 @@ Every package follows the next-auth / uploadthing pattern:
 
 ### @cyguin/sniplet
 
-**What it is:** Code snippet manager. Drop-in widget for saving, organizing, and rendering syntax-highlighted code snippets inside a Next.js app.
+**What it is:** Code snippet manager. Drop-in snippet sharing for Next.js apps — create, share, and render syntax-highlighted code snippets with burn-on-read and expiry support.
 
-**Status:** Published — v0.1.0 on npm  
-**Blocker:** Vercel example app deployment blocked — missing zero-segment route file `app/api/snips/route.ts` alongside the catch-all.
+**Status:** Published v0.1.6 on npm — 283 downloads/week  
+**Repo:** https://github.com/joeproit/sniplet (separate from project23 monorepo)  
+**Note:** This package has its own repo and release cycle — not managed through project23.
+
+**Quickstart:** `npx @cyguin/sniplet init` then visit `/snips`
 
 **Core API surface:**
-- Catch-all route: `app/api/snips/[...cyguin]/route.ts`
-- Zero-segment route: `app/api/snips/route.ts` ← **open bug**
-- Component: `<SnipletWidget />`
+- Route: `app/api/snips/[...sniplet]/route.ts`
+- Handler: `createSnipletHandler` from `@cyguin/sniplet/next`
+- Components: `<SnipCreate />`, `<SnipView />` from `@cyguin/sniplet/react`
 - Syntax highlighting: shiki
+- Variants: `base` (unstyled) or `tailwind`
 
-**DB schema:**
-```sql
-CREATE TABLE snips (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  language TEXT NOT NULL,
-  content TEXT NOT NULL,
-  created_at INTEGER NOT NULL
-);
+**Exports:**
+| Import | What you get |
+|--------|-------------|
+| `@cyguin/sniplet` | `Snip`, `CreateSnipInput`, `SnipletAdapter`, `SnipletError` subclasses |
+| `@cyguin/sniplet/next` | `createSnipletHandler`, `SnipletConfig`, `SnipletOptions`, `ExpiryOption` |
+| `@cyguin/sniplet/react` | `SnipCreate`, `SnipView` |
+| `@cyguin/sniplet/adapters/sqlite` | `SQLiteAdapter` |
+| `@cyguin/sniplet/adapters/postgres` | `PostgresAdapter` |
+
+**Configuration:**
+```ts
+createSnipletHandler({
+  adapter,
+  options: {
+    maxLength: 100_000,      // max content bytes
+    defaultExpiry: '7d',    // default expiry
+    allowAnonymous: true,    // allow anonymous creates
+    rateLimit: { window: '1m', max: 30 },
+  },
+})
 ```
 
-**Adapters:** SQLiteAdapter, PostgresAdapter
+**Requirements:** Next.js 14+, Node.js 20+, React 18+
 
 ---
 
@@ -473,7 +488,7 @@ CREATE TABLE survey_responses (
 
 | Priority | Package | Status | Path |
 |----------|---------|--------|------|
-| 1 | @cyguin/sniplet | Published v0.1.0 | npm — deploy bug open |
+| 1 | @cyguin/sniplet | Published v0.1.6 | npm — separate repo |
 | 2 | @cyguin/changelog | Built, pre-publish | npm |
 | 3 | @cyguin/flag | Built, pre-publish | npm |
 | 4 | @cyguin/feedback | Scoped, not built | npm |
@@ -529,7 +544,7 @@ Pass `schema` to `drizzle()` call to enable `.query.users.findFirst()` pattern.
 
 | Package | Issue | Blocker |
 |---------|-------|---------|
-| sniplet | Missing `app/api/snips/route.ts` zero-segment route | Vercel deploy |
 | changelog | Needs NPM_TOKEN secret in Forgejo | Publish |
 | flag | Needs NPM_TOKEN secret in Forgejo | Publish |
-| all packages | Theme tokens not yet applied to built packages | Cleanup |
+| all packages | Theme tokens (--cyguin-*) not yet applied | Cleanup |
+| crisptrader | Needs review — is it npm package or Path B SaaS? | Classification |
