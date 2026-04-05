@@ -266,6 +266,77 @@ Avoid exporting types and components with identical names.
 
 ---
 
+## Git Commit Protocol
+
+### When to Commit
+
+Agents **must** commit at these points:
+
+| Event | Commit Type | Message Pattern |
+|-------|-------------|----------------|
+| Phase handoff (e.g., research → dev) | `feat:` | `[project] phase: research complete` |
+| Feature complete | `feat:` | `[project] add: feature name` |
+| Bug fix during development | `fix:` | `[project] fix: issue description` |
+| Build error fix | `fix:` | `[project] fix: build error in file/component` |
+| QA loop fix | `fix:` | `[project] fix: qa issue in area` |
+| Checkpoint (every 3 features) | `feat:` | `[project] checkpoint: group of features` |
+| Signoff complete | `chore:` | `[project] signoff: complete` |
+| Docs update | `docs:` | `[project] docs: what was documented` |
+
+### Commit Message Format
+
+```
+[type]: [project] description
+
+[type] = feat | fix | docs | chore | refactor | test
+```
+
+### Examples
+
+```bash
+# Feature complete
+git commit -m "feat: flag add percentage rollout evaluation"
+
+# Bug fix during dev
+git commit -m "fix: flag resolve Flag type/component naming conflict"
+
+# QA loop fix
+git commit -m "fix: crisptrader resolve lazy DB init at build time"
+
+# Handoff
+git commit -m "feat: crisptrader phase: research complete, moving to dev"
+
+# Signoff
+git commit -m "chore: crisptrader signoff: complete, all acceptance criteria met"
+```
+
+### Branch Strategy
+
+```
+main (production-ready)
+  └── staging (integration testing)
+        └── feature/[name] (individual features)
+```
+
+- Feature branches → PR to staging
+- Staging merges → main for production
+- Never push directly to main
+- Checkpoint commits on staging are encouraged
+
+### Agent Git Access
+
+| Agent | Git Read | Git Write | Notes |
+|-------|-----------|------------|-------|
+| /s-mgr | ✓ | ✗ | Only writes to docs |
+| /s-prj | ✓ | ✓ | Full access, manages branches |
+| /s-dev | ✓ | ✓ | Commits feature work |
+| /s-qa | ✓ | ✗ | Reads only |
+| /s-ref | ✓ | ✗ | Reads only |
+| /s-res | ✓ | ✗ | Reads only |
+| /s-signoff | ✓ | ✓ | Signs off and commits |
+
+---
+
 ## v1 Known Limitations
 
 - Notifications via CLI only (no Slack/email)
