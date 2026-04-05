@@ -4,25 +4,24 @@
 
 ## State
 
-- **Status:** `idle` | `running` | `paused` | `complete`
-- **Current:** `[package name]` or empty
-- **Started:** `[timestamp]` or empty
-- **Last Updated:** `[timestamp]`
+- **Status:** `idle`
+- **Current:** ``
+- **Started:** ``
+- **Last Updated:** 2026-04-04
 
-## Queue (in priority order)
+## Queue (in priority order after daily digest)
 
-| # | Package | State | Spec | Notes |
-|---|---------|-------|------|-------|
-| 1 | sniplet | queued | done | Overhaul: [...]cyguin + theming |
-| 2 | changelog | queued | missing | Needs verification — code may exist |
-| 3 | feedback | queued | missing | SUITE_CATALOG says "scoped" — verify |
-| 4 | waitlist | queued | missing | SUITE_CATALOG says "scoped" — verify |
-| 5 | uptime | queued | missing | Path B hosted SaaS |
-| 6 | announce | queued | missing | Proposed |
-| 7 | notify | queued | missing | Proposed |
-| 8 | docs | queued | missing | Proposed |
-| 9 | banner | queued | missing | Proposed |
-| 10 | survey | queued | missing | Proposed |
+| # | Package | State | Spec | Effort | Notes |
+|---|---------|-------|------|--------|-------|
+| 1 | sniplet | queued | done | 3 | Overhaul: [...]cyguin + theming |
+| 2 | announce | queued | done | 2 | Proposed, confirmed gap — no drop-in exists |
+| 3 | banner | queued | missing | 1–2 | Proposed, confirmed gap — abandonware landscape |
+| 4 | notify | queued | missing | 3 | Proposed, confirmed gap — no self-hostable option |
+| 5 | feedback | queued | missing | 3 | Scoped in SUITE_CATALOG |
+| 6 | waitlist | queued | missing | 3 | Scoped in SUITE_CATALOG |
+| 7 | docs | queued | missing | 3–4 | Medium effort |
+| 8 | survey | queued | missing | 4 | More complex, lower urgency |
+| 9 | uptime | queued | missing | — | Path B hosted SaaS — separate track |
 
 ## Completed
 
@@ -30,11 +29,10 @@
 |---------|------------|-----------|------|
 | flag | ✅ | ❌ | 2026-04-04 |
 | crisptrader | ✅ | ❌ | 2026-04-04 |
-| sniplet | ❌ | v0.1.6 (old repo) | — |
 
 ## Paused At
 
-- `[package name]` — `[reason]`
+- `` — ``
 
 ## Notes
 
@@ -42,4 +40,5 @@
 - Run `/s-prd queue start` to begin processing
 - Run `/s-prd queue pause` to stop at current item
 - Queue processes in priority order (lowest number first)
-- A package must have SPEC.md to be processed — s-prd will scope it first if missing
+- A package must have SPEC.md to be processed — s-prd scopes it first if missing
+- Daily digest run 2026-04-04: confirmed existing queue items are valid gaps
