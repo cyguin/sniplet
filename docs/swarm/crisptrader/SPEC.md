@@ -158,16 +158,16 @@ lin TX (systemd poller, 5-min interval)
 
 ## Acceptance Criteria
 
-- [ ] Metals.dev API returns clean spot prices for XAU, XAG, XPT, XPD
-- [ ] User can create, edit, delete alerts (authenticated)
-- [ ] Edge-triggered evaluation works correctly
-- [ ] Snooze prevents re-fire within 4 hours
-- [ ] Email sent via Resend when alert triggers
-- [ ] Poller runs on lin TX, calls /api/internal/check every 5 min
-- [ ] Stripe Checkout works for plan upgrades
-- [ ] Customer portal allows plan changes and cancellation
-- [ ] Free tier: 3 alerts max, 15-min poll
-- [ ] Stacker tier: 25 alerts, 5-min poll
-- [ ] Vault tier: unlimited alerts, 1-min poll
-- [ ] Landing page with CTA
-- [ ] No spam when price sits below threshold
+- [x] Metals.dev API returns clean spot prices for XAU, XAG, XPT, XPD
+- [x] User can create, edit, delete alerts (authenticated)
+- [x] Edge-triggered evaluation works correctly
+- [x] Snooze prevents re-fire within 4 hours
+- [x] Email sent via Resend when alert triggers
+- [x] Poller runs on lin TX, calls /api/internal/check every 5 min
+- [x] Stripe Checkout works for plan upgrades
+- [x] Customer portal allows plan changes and cancellation
+- [x] Free tier: 3 alerts max, 15-min poll
+- [x] Stacker tier: 25 alerts, 5-min poll
+- [x] Vault tier: unlimited alerts, 1-min poll
+- [x] Landing page with CTA
+- [x] No spam when price sits below threshold
