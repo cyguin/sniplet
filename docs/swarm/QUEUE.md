@@ -4,16 +4,16 @@
 
 ## State
 
-- **Status:** `idle`
-- **Current:** ``
-- **Started:** ``
-- **Last Updated:** 2026-04-04
+- **Status:** `running`
+- **Current:** `sniplet`
+- **Started:** `2026-04-04`
+- **Last Updated:** `2026-04-04`
 
 ## Queue (in priority order after daily digest)
 
 | # | Package | State | Spec | Effort | Notes |
 |---|---------|-------|------|--------|-------|
-| 1 | sniplet | queued | done | 3 | Overhaul: [...]cyguin + theming |
+| 1 | sniplet | **building** | done | 3 | Overhaul: [...]cyguin + theming |
 | 2 | announce | queued | done | 2 | Proposed, confirmed gap — no drop-in exists |
 | 3 | banner | queued | missing | 1–2 | Proposed, confirmed gap — abandonware landscape |
 | 4 | notify | queued | missing | 3 | Proposed, confirmed gap — no self-hostable option |
@@ -37,7 +37,6 @@
 ## Notes
 
 - Run `/s-prd queue status` to see current state
-- Run `/s-prd queue start` to begin processing
 - Run `/s-prd queue pause` to stop at current item
 - Queue processes in priority order (lowest number first)
 - A package must have SPEC.md to be processed — s-prd scopes it first if missing
