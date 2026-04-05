@@ -5,7 +5,7 @@
 ## State
 
 - **Status:** `running`
-- **Current:** `sniplet`
+- **Current:** `announce`
 - **Started:** `2026-04-04`
 - **Last Updated:** `2026-04-04`
 
@@ -13,7 +13,6 @@
 
 | # | Package | State | Spec | Effort | Notes |
 |---|---------|-------|------|--------|-------|
-| 1 | sniplet | **building** | done | 3 | Overhaul: [...]cyguin + theming |
 | 2 | announce | queued | done | 2 | Proposed, confirmed gap — no drop-in exists |
 | 3 | banner | queued | missing | 1–2 | Proposed, confirmed gap — abandonware landscape |
 | 4 | notify | queued | missing | 3 | Proposed, confirmed gap — no self-hostable option |
@@ -27,6 +26,7 @@
 
 | Package | Signed Off | Published | Date |
 |---------|------------|-----------|------|
+| sniplet | ✅ | ❌ | 2026-04-04 |
 | flag | ✅ | ❌ | 2026-04-04 |
 | crisptrader | ✅ | ❌ | 2026-04-04 |
 

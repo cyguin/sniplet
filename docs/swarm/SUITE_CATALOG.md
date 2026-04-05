@@ -112,14 +112,14 @@ Every package follows the next-auth / uploadthing pattern:
 
 **What it is:** Pastebin for code. Drop-in snippet sharing for Next.js — like a private, self-hosted Pastebin with syntax highlighting, burn-on-read, and expiry. Share code snippets with a URL, no account required.
 
-**Status:** Published v0.1.6 on npm — 283 downloads/week  
-**Repo:** https://github.com/joeproit/sniplet (separate from project23 monorepo)  
-**In overhaul:** Target v0.2.0 — reabsorb into project23, migrate route to `[...cyguin]`, apply `--cyguin-*` theme tokens. See `docs/swarm/sniplet/SPEC.md`.
+**Status:** ✅ Signed off — v0.2.0 built, awaiting npm publish  
+**Repo:** `packages/sniplet/` in project23 monorepo  
+**Published:** v0.1.6 on npm (283/week) — v0.2.0 pending publish
 
 **Quickstart:** `npx @cyguin/sniplet init` then visit `/snips`
 
 **Core API surface:**
-- Route: `app/api/snips/[...sniplet]/route.ts`
+- Route: `app/api/snips/[...cyguin]/route.ts`
 - Handler: `createSnipletHandler` from `@cyguin/sniplet/next`
 - Components: `<SnipCreate />`, `<SnipView />` from `@cyguin/sniplet/react`
 - Syntax highlighting: shiki
@@ -488,7 +488,7 @@ CREATE TABLE survey_responses (
 
 | Priority | Package | Status | Path |
 |----------|---------|--------|------|
-| 1 | @cyguin/sniplet | Overhaul: v0.2.0 | project23 — `[...cyguin]` + theming |
+| 1 | @cyguin/sniplet | ✅ Signed off v0.2.0 | project23 — `[...cyguin]` + theming |
 | 2 | @cyguin/changelog | Built, pre-publish | npm |
 | 3 | @cyguin/flag | Built, pre-publish | npm |
 | 4 | @cyguin/feedback | Scoped, not built | npm |
@@ -544,7 +544,7 @@ Pass `schema` to `drizzle()` call to enable `.query.users.findFirst()` pattern.
 
 | Package | Issue | Blocker |
 |---------|-------|---------|
-| sniplet | v0.1.6 on npm, separate repo — needs reabsorb + overhaul | Launch sniplet overhaul |
+| sniplet | v0.2.0 signed off — pending npm publish | Awaiting publish pipeline |
 | changelog | Needs NPM_TOKEN secret in Forgejo | Publish |
 | flag | Needs NPM_TOKEN secret in Forgejo | Publish |
 | crisptrader | Full Next.js app, private: true — Path B SaaS | Classification |
