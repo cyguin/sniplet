@@ -72,7 +72,7 @@ export default function CreatePage() {
         navigator.clipboard.writeText(url)
         window.location.href = `/snips/${id}`
       }}
-      theme="light"
+      theme="dark"
     />
   )
 }
@@ -84,7 +84,7 @@ export default function CreatePage() {
 import { SnipView } from '@cyguin/sniplet/react'
 
 export default function SnipPage({ params }: { params: { id: string } }) {
-  return <SnipView id={params.id} apiBase="/api/snips" theme="light" />
+  return <SnipView id={params.id} apiBase="/api/snips" theme="dark" />
 }
 ```
 
@@ -103,15 +103,15 @@ export default function SnipPage({ params }: { params: { id: string } }) {
 
 ## Theming
 
-All components use `--cyguin-*` CSS custom properties. Set them on a parent element or CSS selector:
+All components default to the cyguin dark theme and use `--cyguin-*` CSS custom properties. Set them on a parent element or CSS selector:
 
 ```css
-/* Light (default) */
+/* Dark (default) */
 :root {
-  --cyguin-bg: #ffffff;
-  --cyguin-bg-subtle: #f5f5f5;
-  --cyguin-border: #e5e5e5;
-  --cyguin-fg: #0a0a0a;
+  --cyguin-bg: #0a0d17;
+  --cyguin-bg-subtle: #101521;
+  --cyguin-border: #252b3a;
+  --cyguin-fg: #f1f3f6;
   --cyguin-fg-muted: #888888;
   --cyguin-accent: #f5a800;
   --cyguin-accent-dark: #c47f00;
@@ -120,21 +120,13 @@ All components use `--cyguin-*` CSS custom properties. Set them on a parent elem
   --cyguin-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-/* Dark (cyguin) */
-[data-theme="dark"] {
-  --cyguin-bg: #0a0a0a;
-  --cyguin-bg-subtle: #1a1a1a;
-  --cyguin-border: #2a2a2a;
-  --cyguin-fg: #f5f5f5;
-  --cyguin-shadow: 0 1px 4px rgba(0,0,0,0.4);
-}
 ```
 
-Or pass `theme="dark"` prop:
+Or pass `theme="light"` prop:
 
 ```tsx
-<SnipCreate theme="dark" />
-<SnipView theme="dark" />
+<SnipCreate theme="light" />
+<SnipView theme="light" />
 ```
 
 ---
