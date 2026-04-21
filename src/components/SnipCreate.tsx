@@ -135,15 +135,15 @@ export function SnipCreate({
 
 function getStyles(theme: 'light' | 'dark', loading: boolean): Record<string, React.CSSProperties> {
   const isDark = theme === 'dark'
-  const bg = isDark ? 'var(--cyguin-bg, #0a0a0a)' : 'var(--cyguin-bg, #ffffff)'
-  const bgSubtle = isDark ? 'var(--cyguin-bg-subtle, #1a1a1a)' : 'var(--cyguin-bg-subtle, #f5f5f5)'
-  const border = isDark ? 'var(--cyguin-border, #2a2a2a)' : 'var(--cyguin-border, #e5e5e5)'
-  const fg = isDark ? 'var(--cyguin-fg, #f5f5f5)' : 'var(--cyguin-fg, #0a0a0a)'
-  const fgMuted = 'var(--cyguin-fg-muted, #888888)'
-  const accent = 'var(--cyguin-accent, #f5a800)'
-  const accentFg = 'var(--cyguin-accent-fg, #0a0a0a)'
+  const bg = isDark ? 'var(--cyguin-bg, #0a0d17)' : 'var(--cyguin-bg, #ffffff)'
+  const bgSubtle = isDark ? 'var(--cyguin-bg-subtle, #101521)' : 'var(--cyguin-bg-subtle, #f1f3f6)'
+  const border = isDark ? 'var(--cyguin-border, #252b3a)' : 'var(--cyguin-border, #e5e5e5)'
+  const fg = isDark ? 'var(--cyguin-fg, #f1f3f6)' : 'var(--cyguin-fg, #0a0d17)'
+  const fgMuted = 'var(--cyguin-fg-muted, #858b98)'
+  const accent = 'var(--cyguin-accent, #ffd21f)'
+  const accentFg = 'var(--cyguin-accent-fg, #0a0d17)'
   const radius = 'var(--cyguin-radius, 6px)'
-  const shadow = isDark ? 'var(--cyguin-shadow, 0 1px 4px rgba(0,0,0,0.4))' : 'var(--cyguin-shadow, 0 1px 4px rgba(0,0,0,0.08))'
+  const shadow = isDark ? 'var(--cyguin-shadow, 0 1px 4px rgba(0,0,0,0.32))' : 'var(--cyguin-shadow, 0 1px 4px rgba(0,0,0,0.08))'
 
   return {
     form: {
