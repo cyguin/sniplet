@@ -16,7 +16,7 @@ export function SnipView({
   apiBase = '/api/snips',
   variant = 'base',
   className = '',
-  theme = 'light',
+  theme = 'dark',
 }: SnipViewProps) {
   const [snip, setSnip] = useState<Snip | null>(null)
   const [loading, setLoading] = useState(true)

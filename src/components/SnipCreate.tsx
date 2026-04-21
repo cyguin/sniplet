@@ -19,7 +19,7 @@ export function SnipCreate({
   className = '',
   defaultLanguage = 'javascript',
   maxLength = 100000,
-  theme = 'light',
+  theme = 'dark',
 }: SnipCreateProps) {
   const [title, setTitle] = useState('')
   const [language, setLanguage] = useState(defaultLanguage)
