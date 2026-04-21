@@ -9,6 +9,11 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -34,7 +39,9 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "pack:check": "npm pack --dry-run",
+    "prepublishOnly": "npm run build && npm run pack:check"
   },
   "dependencies": {
     "nanoid": "^5.0.0",
