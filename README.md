@@ -120,7 +120,7 @@ All components use `--cyguin-*` CSS custom properties. Set them on a parent elem
   --cyguin-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-/* Dark (Cyguin) */
+/* Dark (cyguin) */
 [data-theme="dark"] {
   --cyguin-bg: #0a0a0a;
   --cyguin-bg-subtle: #1a1a1a;

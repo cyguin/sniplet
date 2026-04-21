@@ -1,6 +1,6 @@
 {
   "name": "@cyguin/sniplet",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Pastebin for code. Drop-in snippet sharing for Next.js with syntax highlighting, burn-on-read, and expiry.",
   "repository": {
     "type": "git",
@@ -66,5 +66,9 @@
     "nextjs",
     "syntax-highlighting"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "author": {
+    "name": "cyguin LLC",
+    "url": "https://cyguin.com"
+  }
 }
