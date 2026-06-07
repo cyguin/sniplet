@@ -1,14 +1,12 @@
 # @cyguin/sniplet
 
-**Pastebin for code.** Drop-in snippet sharing for Next.js apps.
+Pastebin for code. Drop-in, no account required, self-hosted on your own database.
 
-```
+```bash
 npm install @cyguin/sniplet
 ```
 
-Share code snippets via URL — burn-on-read, expiry, syntax highlighting. No account required. Self-hosted on your own database.
-
----
+Share snippets via URL with burn-on-read, expiry, and syntax highlighting. You own the data — it lives in your database, not on some third-party server.
 
 ## Quick Start
 
@@ -21,24 +19,6 @@ npm install @cyguin/sniplet
 **2. Add the route** — `app/api/snips/[...cyguin]/route.ts`:
 
 ```typescript
-import { createSnipletHandler } from '@cyguin/sniplet/next'
-import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
-
-(globalThis as any).__SNIPLET_CONFIG__ = createSnipletHandler({
-  adapter: SQLiteAdapter({ path: './data/sniplet.db' }),
-  options: {
-    defaultExpiry: '7d',
-    rateLimit: { window: '1m', max: 30 },
-  },
-})
-
-export { handler as GET, handler as POST, handler as DELETE } from '@cyguin/sniplet/next'
-```
-
-Wait — the `handler` export doesn't exist yet. The real pattern in Next.js App Router is:
-
-```typescript
-// app/api/snips/[...cyguin]/route.ts
 import { createSnipletHandler } from '@cyguin/sniplet/next'
 import { SQLiteAdapter } from '@cyguin/sniplet/adapters/sqlite'
 
@@ -88,8 +68,6 @@ export default function SnipPage({ params }: { params: { id: string } }) {
 }
 ```
 
----
-
 ## API Routes
 
 | Method | Route | Description |
@@ -99,14 +77,11 @@ export default function SnipPage({ params }: { params: { id: string } }) {
 | `POST` | `/api/snips` | Create a new snip |
 | `DELETE` | `/api/snips/[...cyguin]` | Delete a snip |
 
----
-
 ## Theming
 
-All components default to the cyguin dark theme and use `--cyguin-*` CSS custom properties. Set them on a parent element or CSS selector:
+Components default to the cyguin dark palette. Set `--cyguin-*` variables on a parent or `:root`:
 
 ```css
-/* Dark (default) */
 :root {
   --cyguin-bg: #0a0d17;
   --cyguin-bg-subtle: #101521;
@@ -119,17 +94,14 @@ All components default to the cyguin dark theme and use `--cyguin-*` CSS custom 
   --cyguin-radius: 6px;
   --cyguin-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
-
 ```
 
-Or pass `theme="light"` prop:
+For a light interface, pass `theme="light"`:
 
 ```tsx
 <SnipCreate theme="light" />
 <SnipView theme="light" />
 ```
-
----
 
 ## Adapters
 
@@ -153,8 +125,6 @@ createSnipletHandler({
 })
 ```
 
----
-
 ## Exports
 
 | Import | What you get |
@@ -165,15 +135,11 @@ createSnipletHandler({
 | `@cyguin/sniplet/adapters/sqlite` | `SQLiteAdapter` |
 | `@cyguin/sniplet/adapters/postgres` | `PostgresAdapter` |
 
----
-
 ## Requirements
 
 - Next.js 14+ (App Router)
 - React 18+
 - Node.js 20+
-
----
 
 ## License
 
