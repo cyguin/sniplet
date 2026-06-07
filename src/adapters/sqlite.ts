@@ -1,3 +1,4 @@
+import type { Database as DatabaseType } from 'better-sqlite3'
 import type { SnipletAdapter } from '../types'
 import type { Snip } from '../types'
 
@@ -6,10 +7,10 @@ export interface SQLiteAdapterOptions {
 }
 
 export function SQLiteAdapter(options: SQLiteAdapterOptions = {}): SnipletAdapter {
-  let db: any
+  let db: DatabaseType
   try {
-    const Database = require('better-sqlite3')
-    const dbPath = (options as any).path ?? './data/sniplet.db'
+    const Database = require('better-sqlite3') as new (path: string) => DatabaseType
+    const dbPath = options.path ?? './data/sniplet.db'
     db = new Database(dbPath)
     db.pragma('journal_mode = WAL')
   } catch {
@@ -55,11 +56,17 @@ export function SQLiteAdapter(options: SQLiteAdapterOptions = {}): SnipletAdapte
 
     async findById(id: string): Promise<Snip | null> {
       const stmt = db.prepare('SELECT * FROM snips WHERE id = ?')
-      const row: any = stmt.get(id)
+      const row = stmt.get(id) as Record<string, unknown> | undefined
       if (!row) return null
       return {
-        ...row,
+        id: row.id as string,
+        title: row.title as string,
+        language: row.language as string,
+        content: row.content as string,
         burn_on_read: Boolean(row.burn_on_read),
+        expires_at: row.expires_at as number | null,
+        view_count: row.view_count as number,
+        created_at: row.created_at as number,
       }
     },
 
@@ -78,7 +85,7 @@ export function SQLiteAdapter(options: SQLiteAdapterOptions = {}): SnipletAdapte
       const stmt = db.prepare(
         'SELECT COUNT(*) as count FROM snip_access WHERE ip = ? AND timestamp > ?'
       )
-      const row: any = stmt.get(ip, cutoff)
+      const row = stmt.get(ip, cutoff) as { count: number } | undefined
       return row?.count ?? 0
     },
 

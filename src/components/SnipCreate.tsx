@@ -127,7 +127,7 @@ export function SnipCreate({
       {error && <p style={styles.error}>{error}</p>}
 
       <button type="submit" disabled={loading} style={styles.button}>
-        {loading ? 'Creating...' : 'Create Snippet'}
+        {loading ? 'Creating...' : 'Create Snip'}
       </button>
     </form>
   )

@@ -61,14 +61,14 @@ export function SnipView({
       <div style={styles.container} className={className}>
         <div style={styles.errorBox}>
           <h2 style={styles.errorTitle}>
-            {isExpired ? 'Snippet Expired' : isBurned ? 'Snippet Burned' : 'Not Found'}
+            {isExpired ? 'Snip Expired' : isBurned ? 'Snip Burned' : 'Not Found'}
           </h2>
           <p style={styles.errorMsg}>
             {isExpired
-              ? 'This snippet has passed its expiry date and has been deleted.'
+              ? 'This snip has passed its expiry date and has been deleted.'
               : isBurned
-              ? 'This snippet was set to burn on read and has already been viewed.'
-              : 'This snippet does not exist.'}
+              ? 'This snip was set to burn on read and has already been viewed.'
+              : 'This snip does not exist.'}
           </p>
         </div>
       </div>
