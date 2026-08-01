@@ -1,6 +1,6 @@
 {
   "name": "@cyguin/sniplet",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Pastebin for code. Drop-in snippet sharing for Next.js with syntax highlighting, burn-on-read, and expiry.",
   "repository": {
     "type": "git",
@@ -47,22 +47,21 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@types/better-sqlite3": "^7.6.13",
     "better-sqlite3": "^12.10.0",
     "nanoid": "^5.0.0",
-    "shiki": "^1.0.0",
-    "vitest": "^4.1.8"
+    "shiki": "^1.0.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "react": "^18.3.0",
     "tsup": "^8.0.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "vitest": "^4.1.8"
   },
   "peerDependencies": {
-    "next": ">=14.0.0",
     "react": ">=18.0.0"
   },
   "keywords": [
